@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vino: #68070B;
+  --color-carne: #941B20;
+  --color-oro: #C9A84C;
+  --color-crema: #F8F6F3;
+  --color-tinta: #202B33;
+}
+
+body {
+  margin: 0;
+  background: var(--color-crema);
+  color: var(--color-tinta);
+}
