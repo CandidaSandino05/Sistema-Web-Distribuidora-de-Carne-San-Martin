@@ -1,18 +1,21 @@
-import { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { NavLink, Outlet, Navigate, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
   Package,
   ShoppingCart,
   Users,
   CircleDollarSign,
+  BarChart3,
   Settings,
   Menu,
   ChevronDown,
   MapPin,
   LogOut,
+  UserCircle,
 } from 'lucide-react'
 import logo from '../assets/logo.png'
+import { useAuth } from '../AuthContext'
 
 const opciones = [
   { texto: 'Dashboard', ruta: '/dashboard', icono: LayoutDashboard },
@@ -20,16 +23,45 @@ const opciones = [
   { texto: 'Ventas', ruta: '/ventas', icono: ShoppingCart },
   { texto: 'Clientes', ruta: '/clientes', icono: Users },
   { texto: 'Cuentas por Cobrar', ruta: '/cuentas-por-cobrar', icono: CircleDollarSign },
+  { texto: 'Reportes', ruta: '/reportes', icono: BarChart3 },
   { texto: 'Configuración', ruta: '/configuracion', icono: Settings },
 ]
 
 export default function Layout() {
   const [abierto, setAbierto] = useState(false)
+  const [menuUsuario, setMenuUsuario] = useState(false)
+  const cajaUsuario = useRef(null)
   const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const { usuario, logout, puedeVer } = useAuth()
+
+  // Cierra el menú de usuario al hacer clic fuera de él
+  useEffect(() => {
+    const clicFuera = (e) => {
+      if (cajaUsuario.current && !cajaUsuario.current.contains(e.target)) {
+        setMenuUsuario(false)
+      }
+    }
+    document.addEventListener('mousedown', clicFuera)
+    return () => document.removeEventListener('mousedown', clicFuera)
+  }, [])
+
+  // Sin sesión iniciada, se regresa al login
+  if (!usuario) return <Navigate to="/" replace />
+
+  // Si el rol no puede ver esta pantalla, se regresa al Dashboard
+  if (!puedeVer(pathname)) return <Navigate to="/dashboard" replace />
+
+  const cerrarSesion = () => {
+    setMenuUsuario(false)
+    logout()
+    navigate('/')
+  }
+
+  const opcionesVisibles = opciones.filter((o) => puedeVer(o.ruta))
 
   return (
     <div className="min-h-screen flex">
-      {/* Fondo oscuro en celular cuando el menú está abierto */}
       {abierto && (
         <div
           className="fixed inset-0 bg-black/40 z-20 md:hidden"
@@ -53,7 +85,7 @@ export default function Layout() {
         </div>
 
         <nav className="flex-1 px-3 space-y-1">
-          {opciones.map(({ texto, ruta, icono: Icono }) => (
+          {opcionesVisibles.map(({ texto, ruta, icono: Icono }) => (
             <NavLink
               key={ruta}
               to={ruta}
@@ -72,7 +104,7 @@ export default function Layout() {
 
         <div className="px-3 pb-4">
           <button
-            onClick={() => navigate('/')}
+            onClick={cerrarSesion}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/10 transition"
           >
             <LogOut size={20} /> Cerrar sesión
@@ -97,12 +129,45 @@ export default function Layout() {
             </h2>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="w-9 h-9 rounded-full bg-carne text-white flex items-center justify-center text-sm font-semibold">
-              U
-            </div>
-            <span className="hidden md:inline text-sm">Usuario</span>
-            <ChevronDown size={16} />
+          {/* Menú de usuario */}
+          <div className="relative shrink-0" ref={cajaUsuario}>
+            <button
+              onClick={() => setMenuUsuario(!menuUsuario)}
+              className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-crema transition"
+            >
+              <div className="w-9 h-9 rounded-full bg-carne text-white flex items-center justify-center text-sm font-semibold">
+                {usuario.nombre.charAt(0).toUpperCase()}
+              </div>
+              <span className="hidden md:inline text-sm">{usuario.nombre}</span>
+              <ChevronDown
+                size={16}
+                className={`transition-transform ${menuUsuario ? 'rotate-180' : ''}`}
+              />
+            </button>
+
+            {menuUsuario && (
+              <div className="absolute right-0 mt-2 w-60 bg-white rounded-xl shadow-lg border border-gray-100 z-40 overflow-hidden">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="font-semibold">{usuario.nombre}</p>
+                  <p className="text-xs text-gray-500">Rol: {usuario.rol}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setMenuUsuario(false)
+                    navigate('/configuracion')
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-crema text-left"
+                >
+                  <UserCircle size={18} className="text-gray-500" /> Mi perfil
+                </button>
+                <button
+                  onClick={cerrarSesion}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-red-50 text-carne text-left border-t border-gray-100"
+                >
+                  <LogOut size={18} /> Cerrar sesión
+                </button>
+              </div>
+            )}
           </div>
         </header>
 

@@ -13,3 +13,27 @@ body {
   background: var(--color-crema);
   color: var(--color-tinta);
 }
+
+@media print {
+  aside,
+  header,
+  footer,
+  .no-imprimir {
+    display: none !important;
+  }
+
+  /* Imprimir los colores de fondo (barras, etiquetas, tarjetas) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Evitar que una tarjeta se corte entre dos páginas */
+  .bg-white {
+    break-inside: avoid;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+}
