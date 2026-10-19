@@ -12,12 +12,14 @@ const permisos = {
   Administrador: [
     'inventario.editar',
     'ventas.registrar',
+    'ventas.descuento',
     'clientes.editar',
     'clientes.eliminar',
     'cxc.pagar',
+    'perfil.editar',
   ],
   Vendedor: ['ventas.registrar', 'clientes.editar', 'cxc.pagar'],
-  Gerente: [], // solo lectura
+  Gerente: [],
 }
 
 // Qué pantallas puede ver cada rol

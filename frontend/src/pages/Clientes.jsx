@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Search, Plus, Pencil, Trash2, X, History, Phone, MapPin } from 'lucide-react'
+import { useAuth } from '../AuthContext'
 
 const datosIniciales = [
   {
@@ -55,6 +56,10 @@ const estiloInput =
   'w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-oro'
 
 export default function Clientes() {
+  const { puede } = useAuth()
+  const puedeEditar = puede('clientes.editar')
+  const puedeEliminar = puede('clientes.eliminar')
+
   const [clientes, setClientes] = useState(datosIniciales)
   const [busqueda, setBusqueda] = useState('')
   const [modalAbierto, setModalAbierto] = useState(false)
@@ -92,6 +97,7 @@ export default function Clientes() {
 
   const guardar = (e) => {
     e.preventDefault()
+    if (!puedeEditar) return
 
     if (!form.nombre.trim()) return setError('El nombre del cliente es obligatorio.')
     if (!/^\d{8}$/.test(form.telefono))
@@ -108,6 +114,7 @@ export default function Clientes() {
   }
 
   const eliminar = (cliente) => {
+    if (!puedeEliminar) return
     if (cliente.saldo > 0) {
       return window.alert(
         `No se puede eliminar a "${cliente.nombre}" porque tiene un saldo pendiente de C$${cliente.saldo.toFixed(2)}.`
@@ -125,12 +132,14 @@ export default function Clientes() {
           <h1 className="font-serif text-3xl text-vino font-bold">Clientes</h1>
           <p className="text-gray-500 text-sm">Registro de clientes y saldos pendientes</p>
         </div>
-        <button
-          onClick={abrirNuevo}
-          className="flex items-center justify-center gap-2 bg-carne hover:bg-vino text-white font-semibold rounded-lg px-4 py-2.5 transition"
-        >
-          <Plus size={20} /> Nuevo cliente
-        </button>
+        {puedeEditar && (
+          <button
+            onClick={abrirNuevo}
+            className="flex items-center justify-center gap-2 bg-carne hover:bg-vino text-white font-semibold rounded-lg px-4 py-2.5 transition"
+          >
+            <Plus size={20} /> Nuevo cliente
+          </button>
+        )}
       </div>
 
       {/* Tabla */}
@@ -190,20 +199,24 @@ export default function Clientes() {
                       >
                         <History size={18} />
                       </button>
-                      <button
-                        onClick={() => abrirEditar(c)}
-                        className="p-2 rounded-lg hover:bg-crema text-gray-600"
-                        title="Editar"
-                      >
-                        <Pencil size={18} />
-                      </button>
-                      <button
-                        onClick={() => eliminar(c)}
-                        className="p-2 rounded-lg hover:bg-red-50 text-carne"
-                        title="Eliminar"
-                      >
-                        <Trash2 size={18} />
-                      </button>
+                      {puedeEditar && (
+                        <button
+                          onClick={() => abrirEditar(c)}
+                          className="p-2 rounded-lg hover:bg-crema text-gray-600"
+                          title="Editar"
+                        >
+                          <Pencil size={18} />
+                        </button>
+                      )}
+                      {puedeEliminar && (
+                        <button
+                          onClick={() => eliminar(c)}
+                          className="p-2 rounded-lg hover:bg-red-50 text-carne"
+                          title="Eliminar"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -221,7 +234,7 @@ export default function Clientes() {
       </div>
 
       {/* Ventana: formulario */}
-      {modalAbierto && (
+      {puedeEditar && modalAbierto && (
         <div className="fixed inset-0 z-40 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-4">

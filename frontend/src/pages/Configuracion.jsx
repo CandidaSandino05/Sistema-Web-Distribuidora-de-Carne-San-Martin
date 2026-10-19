@@ -349,7 +349,8 @@ function Usuarios() {
 /* ---------------------------- MI PERFIL ---------------------------- */
 
 function Perfil() {
-  const { usuario } = useAuth()
+  const { usuario, puede } = useAuth()
+  const puedeEditar = puede('perfil.editar')
   const [datos, setDatos] = useState({ nombre: usuario.nombre, email: usuario.email })
   const [claves, setClaves] = useState({ actual: '', nueva: '', repetir: '' })
   const [errorDatos, setErrorDatos] = useState('')
@@ -376,6 +377,37 @@ function Perfil() {
     setErrorClave('')
     setExitoClave('Tu contraseña se cambió correctamente.')
     setClaves({ actual: '', nueva: '', repetir: '' })
+  }
+
+  // Vendedor y gerente: solo lectura
+  if (!puedeEditar) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-5 space-y-4 max-w-xl">
+        <h2 className="font-semibold text-lg">Mis datos</h2>
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 rounded-full bg-carne text-white flex items-center justify-center text-xl font-semibold">
+            {usuario.nombre.charAt(0).toUpperCase()}
+          </div>
+          <div>
+            <p className="font-semibold">{usuario.nombre}</p>
+            <p className="text-xs text-gray-500">Rol: {usuario.rol}</p>
+          </div>
+        </div>
+
+        <div className="text-sm space-y-2">
+          <p>
+            <span className="text-gray-500">Usuario:</span> {usuario.usuario}
+          </p>
+          <p>
+            <span className="text-gray-500">Correo:</span> {usuario.email}
+          </p>
+        </div>
+
+        <p className="bg-amber-50 border border-amber-300 text-amber-800 text-sm rounded-lg px-3 py-2">
+          Para cambiar tus datos o tu contraseña, contacta al administrador.
+        </p>
+      </div>
+    )
   }
 
   return (

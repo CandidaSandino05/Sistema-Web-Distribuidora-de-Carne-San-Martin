@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Search, Plus, Pencil, Trash2, X, AlertTriangle } from 'lucide-react'
+import { useAuth } from '../AuthContext'
 
 const datosIniciales = [
   { id: 1, nombre: 'Corbata', presentacion: 'Fresca', unidadMedida: 'lb', stock: 320, stockMinimo: 100, precioCompra: 4.2, precioVenta: 5.5 },
@@ -19,7 +20,13 @@ const formularioVacio = {
   precioVenta: '',
 }
 
+const estiloInput =
+  'w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-oro'
+
 export default function Inventario() {
+  const { puede } = useAuth()
+  const puedeEditar = puede('inventario.editar')
+
   const [productos, setProductos] = useState(datosIniciales)
   const [busqueda, setBusqueda] = useState('')
   const [modalAbierto, setModalAbierto] = useState(false)
@@ -33,9 +40,7 @@ export default function Inventario() {
 
   const bajos = productos.filter((p) => p.stock <= p.stockMinimo)
 
-  const cambiar = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+  const cambiar = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
   const abrirNuevo = () => {
     setEditandoId(null)
@@ -55,6 +60,7 @@ export default function Inventario() {
 
   const guardar = (e) => {
     e.preventDefault()
+    if (!puedeEditar) return
 
     const stock = Number(form.stock)
     const stockMinimo = Number(form.stockMinimo)
@@ -80,6 +86,7 @@ export default function Inventario() {
   }
 
   const eliminar = (producto) => {
+    if (!puedeEditar) return
     const seguro = window.confirm(`¿Seguro que quieres eliminar "${producto.nombre}"?`)
     if (seguro) setProductos(productos.filter((p) => p.id !== producto.id))
   }
@@ -90,14 +97,18 @@ export default function Inventario() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="font-serif text-3xl text-vino font-bold">Inventario</h1>
-          <p className="text-gray-500 text-sm">Control de productos y existencias</p>
+          <p className="text-gray-500 text-sm">
+            {puedeEditar ? 'Control de productos y existencias' : 'Consulta de productos y existencias'}
+          </p>
         </div>
-        <button
-          onClick={abrirNuevo}
-          className="flex items-center justify-center gap-2 bg-carne hover:bg-vino text-white font-semibold rounded-lg px-4 py-2.5 transition"
-        >
-          <Plus size={20} /> Nuevo producto
-        </button>
+        {puedeEditar && (
+          <button
+            onClick={abrirNuevo}
+            className="flex items-center justify-center gap-2 bg-carne hover:bg-vino text-white font-semibold rounded-lg px-4 py-2.5 transition"
+          >
+            <Plus size={20} /> Nuevo producto
+          </button>
+        )}
       </div>
 
       {/* Alerta de stock bajo */}
@@ -137,7 +148,7 @@ export default function Inventario() {
                 <th className="px-3 py-2">P. Compra</th>
                 <th className="px-3 py-2">P. Venta</th>
                 <th className="px-3 py-2">Estado</th>
-                <th className="px-3 py-2 text-right">Acciones</th>
+                {puedeEditar && <th className="px-3 py-2 text-right">Acciones</th>}
               </tr>
             </thead>
             <tbody>
@@ -164,30 +175,32 @@ export default function Inventario() {
                         {bajo ? 'Stock bajo' : 'Disponible'}
                       </span>
                     </td>
-                    <td className="px-3 py-3">
-                      <div className="flex justify-end gap-2">
-                        <button
-                          onClick={() => abrirEditar(p)}
-                          className="p-2 rounded-lg hover:bg-crema text-gray-600"
-                          title="Editar"
-                        >
-                          <Pencil size={18} />
-                        </button>
-                        <button
-                          onClick={() => eliminar(p)}
-                          className="p-2 rounded-lg hover:bg-red-50 text-carne"
-                          title="Eliminar"
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </div>
-                    </td>
+                    {puedeEditar && (
+                      <td className="px-3 py-3">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => abrirEditar(p)}
+                            className="p-2 rounded-lg hover:bg-crema text-gray-600"
+                            title="Editar"
+                          >
+                            <Pencil size={18} />
+                          </button>
+                          <button
+                            onClick={() => eliminar(p)}
+                            className="p-2 rounded-lg hover:bg-red-50 text-carne"
+                            title="Eliminar"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
               {filtrados.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-3 py-8 text-center text-gray-400">
+                  <td colSpan={puedeEditar ? 8 : 7} className="px-3 py-8 text-center text-gray-400">
                     No se encontraron productos.
                   </td>
                 </tr>
@@ -198,7 +211,7 @@ export default function Inventario() {
       </div>
 
       {/* Ventana del formulario */}
-      {modalAbierto && (
+      {puedeEditar && modalAbierto && (
         <div className="fixed inset-0 z-40 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-6">
             <div className="flex items-center justify-between mb-4">
@@ -283,9 +296,6 @@ export default function Inventario() {
     </div>
   )
 }
-
-const estiloInput =
-  'w-full bg-white border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-oro'
 
 function Campo({ label, children }) {
   return (
