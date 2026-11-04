@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo de Reportes y Rentabilidad | Carnes San Martín</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-cow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 5c-1.5 0-2.8 1.2-3 2.7-.8-.5-1.8-.7-3-.7s-2.2.2-3 .7C9.8 6.2 8.5 5 7 5c-2.2 0-4 1.8-4 4 0 2 1.3 3.6 3.1 3.9C6.4 14.5 7 16.2 7 18h10c0-1.8.6-3.5.9-5.1 1.8-.3 3.1-1.9 3.1-3.9 0-2.2-1.8-4-4-4z"/>
+            <circle cx="9" cy="11" r="1" fill="currentColor"/>
+            <circle cx="15" cy="11" r="1" fill="currentColor"/>
+            <path d="M10 15h4"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">CARNES SAN MARTÍN</span>
+          <span class="brand-sub">Mayorista Premium</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="./dashboard.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="./inventario.html" class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Inventario
+        </a>
+        <a href="./reportes.html" class="nav-item active">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reportes
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">A</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Administrador</span>
+            <span class="user-role" id="userRole">Dirección</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLogout" style="color: #FFFFFF; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">Cerrar Sesión</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button type="button" class="btn-hamburger" id="btnToggleSidebar" aria-label="Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div>
+            <h1 class="header-title">Reportes Financieros y Rentabilidad</h1>
+            <span style="font-size: 0.82rem; color: var(--color-text-muted);">Auditoría de ventas por período y márgenes netos en Córdobas (C$)</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="theme-toggle-btn" aria-label="Cambiar tema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <span class="badge badge-info">Auditoría Ejecutiva</span>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <section class="filter-toolbar">
+          <div class="filter-group-left">
+            <span style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-main);">Período de Análisis:</span>
+            <div class="filter-date-group">
+              <label for="repDesde" style="font-size: 0.8rem; color: var(--color-text-muted);">Desde:</label>
+              <input type="date" id="repDesde" class="form-control form-control-sm">
+            </div>
+            <div class="filter-date-group">
+              <label for="repHasta" style="font-size: 0.8rem; color: var(--color-text-muted);">Hasta:</label>
+              <input type="date" id="repHasta" class="form-control form-control-sm">
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" id="btnFiltrarReporte">Filtrar Rango</button>
+          </div>
+          <div style="display: flex; gap: 0.4rem;">
+            <button type="button" class="filter-pill-btn" data-preset="hoy">Hoy</button>
+            <button type="button" class="filter-pill-btn active" data-preset="7d">Últimos 7 Días</button>
+            <button type="button" class="filter-pill-btn" data-preset="mes">Este Mes</button>
+          </div>
+        </section>
+
+        <section class="bi-kpi-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem;">
+          <article class="bi-kpi-card accent-gold">
+            <span class="bi-kpi-label">Total Vendido en el Rango</span>
+            <span class="bi-kpi-value" id="kpiTotalVendido">C$0.00</span>
+            <span class="bi-kpi-sub">Monto total facturado</span>
+          </article>
+
+          <article class="bi-kpi-card">
+            <span class="bi-kpi-label">Ganancia Neta Total</span>
+            <span class="bi-kpi-value" id="kpiGananciaNeta" style="color: var(--color-success);">C$0.00</span>
+            <span class="bi-kpi-sub">Margen líquido (Precio Venta - Precio Compra)</span>
+          </article>
+        </section>
+
+        <section class="table-responsive">
+          <div style="padding: 1.25rem 1.5rem 0.5rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-main);">Tabla Detallada de Productos Vendidos</h3>
+            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Desglose por corte cárnico</span>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto / Corte Cárnico</th>
+                <th style="text-align: right;">Cantidad Vendida (Lb)</th>
+                <th style="text-align: right;">Precio Unitario (C$)</th>
+                <th style="text-align: right;">Total Cobrado (C$)</th>
+                <th style="text-align: right;">Ganancia Neta (C$)</th>
+              </tr>
+            </thead>
+            <tbody id="reportesTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 3rem;">Generando reporte detallado...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/reportes.js"></script>
+</body>
+</html>

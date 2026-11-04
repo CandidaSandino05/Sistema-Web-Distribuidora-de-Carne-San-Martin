@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Control de Inventario y Carnicería | Carnes San Martín</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-cow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 5c-1.5 0-2.8 1.2-3 2.7-.8-.5-1.8-.7-3-.7s-2.2.2-3 .7C9.8 6.2 8.5 5 7 5c-2.2 0-4 1.8-4 4 0 2 1.3 3.6 3.1 3.9C6.4 14.5 7 16.2 7 18h10c0-1.8.6-3.5.9-5.1 1.8-.3 3.1-1.9 3.1-3.9 0-2.2-1.8-4-4-4z"/>
+            <circle cx="9" cy="11" r="1" fill="currentColor"/>
+            <circle cx="15" cy="11" r="1" fill="currentColor"/>
+            <path d="M10 15h4"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">CARNES SAN MARTÍN</span>
+          <span class="brand-sub">Mayorista Premium</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="./dashboard.html" class="nav-item" id="navDashboardLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="./inventario.html" class="nav-item active" id="navInventarioLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Inventario
+        </a>
+        <a href="./reportes.html" class="nav-item" id="navReportesLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reportes
+        </a>
+        <a href="./clientes.html" class="nav-item" id="navClientesLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Clientes
+        </a>
+        <a href="./cuentas.html" class="nav-item" id="navCxcLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Cuentas por Cobrar
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Cargando...</span>
+            <span class="user-role" id="userRole">Rol</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLogout" style="color: #FFFFFF; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">Cerrar Sesión</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button type="button" class="btn-hamburger" id="btnToggleSidebar" aria-label="Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div>
+            <h1 class="header-title">Gestión de Inventario y Existencias</h1>
+            <span style="font-size: 0.82rem; color: var(--color-text-muted);">Pesaje en Libras (lb) • Moneda: Córdobas (C$)</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="theme-toggle-btn" aria-label="Cambiar tema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <div id="inventoryHeaderActions" style="display: flex; gap: 0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnOpenIngresoGeneralModal" style="color: var(--color-success); border-color: var(--color-success); font-weight: 600;">
+              + Ingresar Stock
+            </button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnOpenMermaModal" style="color: var(--color-danger); border-color: var(--color-danger);">
+              - Descontar Merma
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-abrir-modal-producto">
+              + Registrar Producto
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="inventory-toolbar">
+          <div class="search-filter-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar por nombre de corte o código...">
+          </div>
+          <div class="inventory-actions">
+            <span id="lowStockCounter" class="stock-alert-pill" style="display: none;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              <span id="lowStockText">0 productos con stock bajo</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table table-compact">
+            <thead>
+              <tr id="tableHeaderRow">
+                <th>Código</th>
+                <th>Nombre del Corte</th>
+                <th>Unidad</th>
+                <th>Precio Compra</th>
+                <th>Precio Venta</th>
+                <th id="thGanancia" style="display: none;">Ganancia / lb</th>
+                <th>Stock Actual</th>
+                <th>Stock Mínimo</th>
+                <th>Estado</th>
+                <th style="text-align: right;" id="thAcciones">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productosTableBody">
+              <tr>
+                <td colspan="10" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">Cargando inventario...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="modalProducto" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Nuevo Producto Cárnico</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modalProducto')">&times;</button>
+      </div>
+      <form id="formNuevoProducto">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="prodNombre">Nombre del Producto o Corte</label>
+            <input type="text" id="prodNombre" class="form-control" required placeholder="Ej. Lomo de Res de Primera">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unidad de Medida</label>
+            <input type="text" class="form-control" value="Libra (lb)" disabled style="background-color: var(--color-surface-muted); color: var(--color-text-main); font-weight: 600;">
+            <input type="hidden" id="prodUnidad" value="lb">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="prodPrecioCompra">Precio Compra (C$)</label>
+              <input type="number" id="prodPrecioCompra" class="form-control" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodPrecioVenta">Precio Venta (C$)</label>
+              <input type="number" id="prodPrecioVenta" class="form-control" step="0.01" min="0" required placeholder="0.00">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="prodStockInicial">Stock Inicial (lb)</label>
+              <input type="number" id="prodStockInicial" class="form-control" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prodStockMinimo">Stock Mínimo (lb)</label>
+              <input type="number" id="prodStockMinimo" class="form-control" step="0.01" min="0" required placeholder="0.00">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalProducto')">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnGuardarProducto">Guardar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalEditarProducto" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Producto Cárnico</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modalEditarProducto')">&times;</button>
+      </div>
+      <form id="formEditarProducto">
+        <input type="hidden" id="editProdId">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="editProdNombre">Nombre del Producto o Corte</label>
+            <input type="text" id="editProdNombre" class="form-control" required>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label class="form-label" for="editProdPrecioCompra">Precio Compra (C$)</label>
+              <input type="number" id="editProdPrecioCompra" class="form-control" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="editProdPrecioVenta">Precio Venta (C$)</label>
+              <input type="number" id="editProdPrecioVenta" class="form-control" step="0.01" min="0" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editProdStockMinimo">Stock Mínimo (lb)</label>
+            <input type="number" id="editProdStockMinimo" class="form-control" step="0.01" min="0" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalEditarProducto')">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnActualizarProducto">Actualizar Producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalIngresoStock" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Ingresar Stock a Producto</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modalIngresoStock')">&times;</button>
+      </div>
+      <form id="formIngresoStock">
+        <div class="modal-body">
+          <div class="form-group" id="ingresoSelectGroup">
+            <label class="form-label" for="ingresoProductoSelect">Seleccione el Corte Cárnico</label>
+            <select id="ingresoProductoSelect" class="form-control">
+              <option value="">Seleccione...</option>
+            </select>
+          </div>
+          <div class="form-group" id="ingresoFixedGroup" style="display: none;">
+            <label class="form-label">Corte Cárnico Seleccionado (Fijo)</label>
+            <input type="text" id="ingresoProductoFijoNombre" class="form-control" disabled style="background-color: var(--color-surface-muted); color: var(--color-text-main); font-weight: 700;">
+            <input type="hidden" id="ingresoProductoFijoId">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ingresoCantidad">Cantidad a Ingresar en Libras (lb)</label>
+            <input type="number" id="ingresoCantidad" class="form-control" step="0.01" min="0.01" required placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="ingresoMotivo">Concepto o Documento de Entrada</label>
+            <input type="text" id="ingresoMotivo" class="form-control" placeholder="Ej. Lote San Rafael / Compra mayorista">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalIngresoStock')">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnGuardarIngreso" style="background-color: var(--color-success); border-color: var(--color-success);">+ Confirmar Ingreso</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalMerma" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Merma Operativa de Inventario</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modalMerma')">&times;</button>
+      </div>
+      <form id="formMerma">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="mermaProductoSelect">Seleccione el Producto Cárnico</label>
+            <select id="mermaProductoSelect" class="form-control" required>
+              <option value="">Seleccione...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mermaCantidad">Cantidad a Descontar en Libras (lb)</label>
+            <input type="number" id="mermaCantidad" class="form-control" step="0.01" min="0.01" required placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="mermaMotivo">Motivo de la Merma</label>
+            <select id="mermaMotivo" class="form-control" required>
+              <option value="Merma por desposte / recorte de grasa">Merma por desposte / recorte de grasa</option>
+              <option value="Descongelamiento / evaporación">Descongelamiento / evaporación</option>
+              <option value="Vencimiento / daño en empaque al vacío">Vencimiento / daño en empaque al vacío</option>
+              <option value="Ajuste de pesaje en auditoría física">Ajuste de pesaje en auditoría física</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalMerma')">Cancelar</button>
+          <button type="submit" class="btn btn-danger" id="btnGuardarMerma">Confirmar Descuento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/inventario.js"></script>
+</body>
+</html>

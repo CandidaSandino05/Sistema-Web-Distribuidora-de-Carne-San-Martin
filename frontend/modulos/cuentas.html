@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuentas por Cobrar | Carnes San Martín</title>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-cow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 5c-1.5 0-2.8 1.2-3 2.7-.8-.5-1.8-.7-3-.7s-2.2.2-3 .7C9.8 6.2 8.5 5 7 5c-2.2 0-4 1.8-4 4 0 2 1.3 3.6 3.1 3.9C6.4 14.5 7 16.2 7 18h10c0-1.8.6-3.5.9-5.1 1.8-.3 3.1-1.9 3.1-3.9 0-2.2-1.8-4-4-4z"/>
+            <circle cx="9" cy="11" r="1" fill="currentColor"/>
+            <circle cx="15" cy="11" r="1" fill="currentColor"/>
+            <path d="M10 15h4"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">CARNES SAN MARTÍN</span>
+          <span class="brand-sub">Mayorista Premium</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="./dashboard.html" class="nav-item" id="navDashboardLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="./inventario.html" class="nav-item" id="navInventarioLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Inventario
+        </a>
+        <a href="./ventas.html" class="nav-item" id="navVentasLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          Ventas (POS)
+        </a>
+        <a href="./clientes.html" class="nav-item" id="navClientesLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Clientes
+        </a>
+        <a href="./cuentas.html" class="nav-item active" id="navCxcLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Cuentas por Cobrar
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Cargando...</span>
+            <span class="user-role" id="userRole">Usuario</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLogout" style="color: #FFFFFF; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">Cerrar Sesión</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button type="button" class="btn-hamburger" id="btnToggleSidebar" aria-label="Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div>
+            <h1 class="header-title">Gestión de Créditos y Cuentas por Cobrar</h1>
+            <span style="font-size: 0.82rem; color: var(--color-text-muted);">Seguimiento de saldos y cobros en Córdobas (C$)</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="theme-toggle-btn" aria-label="Cambiar tema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <div class="cxc-summary-grid">
+          <div class="cxc-stat">
+            <span class="cxc-stat-title">Cartera Total Pendiente</span>
+            <span class="cxc-stat-value cxc-debt-alert" id="statCarteraPendiente">C$0.00</span>
+          </div>
+          <div class="cxc-stat">
+            <span class="cxc-stat-title">Créditos Pendientes</span>
+            <span class="cxc-stat-value" id="statCuentasPendientes">0</span>
+          </div>
+          <div class="cxc-stat">
+            <span class="cxc-stat-title">Créditos Saldados</span>
+            <span class="cxc-stat-value" id="statCuentasPagadas" style="color: var(--color-success);">0</span>
+          </div>
+        </div>
+
+        <section class="filter-toolbar">
+          <div class="filter-group-left">
+            <button type="button" class="filter-pill-btn active" data-status="todas">Todas</button>
+            <button type="button" class="filter-pill-btn" data-status="pendiente">Pendientes</button>
+            <button type="button" class="filter-pill-btn" data-status="pagada">Pagadas</button>
+          </div>
+          <div class="filter-date-group">
+            <label for="cxcDesde" style="font-size: 0.8rem; color: var(--color-text-muted);">Desde:</label>
+            <input type="date" id="cxcDesde" class="form-control form-control-sm">
+            <label for="cxcHasta" style="font-size: 0.8rem; color: var(--color-text-muted);">Hasta:</label>
+            <input type="date" id="cxcHasta" class="form-control form-control-sm">
+            <button type="button" class="btn btn-secondary btn-sm" id="btnFiltrarCxc">Filtrar</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnLimpiarCxc">Limpiar</button>
+          </div>
+        </section>
+
+        <div class="table-responsive">
+          <table class="data-table table-compact">
+            <thead>
+              <tr>
+                <th>No. Cuenta</th>
+                <th>No. Factura/Venta</th>
+                <th>Cliente Mayorista</th>
+                <th>Teléfono</th>
+                <th>Total Venta (C$)</th>
+                <th>Saldo Pendiente (C$)</th>
+                <th>Vencimiento</th>
+                <th>Último Pago</th>
+                <th>Estado</th>
+                <th style="text-align: right;" id="thAccionesCxc">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="cxcTableBody">
+              <tr>
+                <td colspan="10" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">Cargando cartera de créditos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="modalPago" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Registrar Abono a Cuenta</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modalPago')">&times;</button>
+      </div>
+      <form id="formPago">
+        <div class="modal-body">
+          <input type="hidden" id="pagoCuentaId">
+          <div class="cxc-info-box">
+            <div><strong>Cliente:</strong> <span id="pagoClienteNombre">-</span></div>
+            <div><strong>Saldo Pendiente Actual:</strong> <span id="pagoSaldoActual" style="font-weight: 700; color: var(--color-primary);">-</span></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pagoMonto">Monto a Abonar (C$)</label>
+            <input type="number" id="pagoMonto" class="form-control" step="0.01" min="0.01" required placeholder="0.00">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pagoMetodo">Método de Pago</label>
+            <select id="pagoMetodo" class="form-control" required>
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia Bancaria</option>
+            </select>
+          </div>
+          <div class="form-group" id="groupPagoBanco" style="display: none;">
+            <label class="form-label" for="pagoBanco">Banco Receptor / Emisor</label>
+            <select id="pagoBanco" class="form-control">
+              <option value="BAC Credomatic">BAC Credomatic</option>
+              <option value="Banpro Grupo Promerica">Banpro Grupo Promerica</option>
+              <option value="Banco LAFISE Bancentro">Banco LAFISE Bancentro</option>
+              <option value="BDF (Banco de Finanzas)">BDF (Banco de Finanzas)</option>
+              <option value="Avanz">Banco Avanz</option>
+            </select>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnPagarTotal" style="margin-bottom: 0.5rem; width: 100%;">
+            Saldar Deuda Total
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal('modalPago')">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btnGuardarPago">Confirmar Pago</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalTimeline" class="modal-backdrop">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="timelineClienteNombre">Línea de Tiempo de Crédito</h3>
+          <span style="font-size: 0.8rem; color: var(--color-text-muted);" id="timelineFacturaInfo">Detalle de facturación y pagos</span>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('modalTimeline')">&times;</button>
+      </div>
+      <div class="modal-body" id="timelineContent">
+        Cargando historial de pagos...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('modalTimeline')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/cuentas.js"></script>
+</body>
+</html>
