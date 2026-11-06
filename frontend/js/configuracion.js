@@ -5,6 +5,6 @@ const API_URL = (window.location.hostname === 'localhost' || window.location.hos
 function getHeaders() {
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('san_martin_token')}` 
+    'Authorization': `Bearer ${localStorage.getItem('san_martin_token')}`
   };
 }
