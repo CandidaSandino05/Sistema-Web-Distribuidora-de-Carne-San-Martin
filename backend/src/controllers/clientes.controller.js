@@ -1,14 +1,12 @@
-const db = require('../config/db');
-const queries = require('../models/queries');
-const { ValidationError, NotFoundError } = require('../utils/errors');
+const clientesService = require('../services/clientes.service');
 
 class ClientesController {
   async listar(req, res, next) {
     try {
-      const { rows } = await db.query(queries.clientes.findAll);
+      const clientes = await clientesService.listarClientes();
       res.status(200).json({
         success: true,
-        data: rows
+        data: clientes
       });
     } catch (err) {
       next(err);
@@ -18,13 +16,10 @@ class ClientesController {
   async obtenerPorId(req, res, next) {
     try {
       const { id } = req.params;
-      const { rows } = await db.query(queries.clientes.findById, [id]);
-      if (rows.length === 0) {
-        throw new NotFoundError('Cliente no encontrado');
-      }
+      const cliente = await clientesService.obtenerClientePorId(id);
       res.status(200).json({
         success: true,
-        data: rows[0]
+        data: cliente
       });
     } catch (err) {
       next(err);
@@ -33,31 +28,10 @@ class ClientesController {
 
   async crear(req, res, next) {
     try {
-      const { nombre, telefono, direccion, email, limite_credito, activo } = req.body;
-
-      if (!nombre || nombre.trim().length === 0) {
-        throw new ValidationError('El nombre del cliente es obligatorio');
-      }
-
-      const limite = limite_credito !== undefined ? parseFloat(limite_credito) : 0;
-      if (limite < 0) {
-        throw new ValidationError('El límite de crédito no puede ser negativo');
-      }
-
-      const isActivo = activo !== undefined ? Boolean(activo) : true;
-
-      const { rows } = await db.query(queries.clientes.create, [
-        nombre.trim(),
-        telefono ? telefono.trim() : null,
-        direccion ? direccion.trim() : null,
-        email ? email.trim().toLowerCase() : null,
-        limite,
-        isActivo
-      ]);
-
+      const cliente = await clientesService.crearCliente(req.body);
       res.status(201).json({
         success: true,
-        data: rows[0]
+        data: cliente
       });
     } catch (err) {
       next(err);
@@ -67,10 +41,24 @@ class ClientesController {
   async historialVentas(req, res, next) {
     try {
       const { id } = req.params;
-      const { rows } = await db.query(queries.clientes.getClientSales, [id]);
+      const ventas = await clientesService.obtenerHistorialVentas(id);
       res.status(200).json({
         success: true,
-        data: rows
+        data: ventas
+      });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  async cambiarEstado(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { activo } = req.body;
+      const cliente = await clientesService.actualizarEstado(id, activo);
+      res.status(200).json({
+        success: true,
+        data: cliente
       });
     } catch (err) {
       next(err);

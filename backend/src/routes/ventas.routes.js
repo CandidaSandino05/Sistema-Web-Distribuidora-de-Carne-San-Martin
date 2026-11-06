@@ -6,9 +6,9 @@ const roleMiddleware = require('../middlewares/role.middleware');
 
 router.use(authMiddleware);
 
-router.get('/', ventasController.listar);
+router.get('/', roleMiddleware('administrador', 'gerente', 'vendedor'), ventasController.listar);
 router.get('/reportes', roleMiddleware('administrador'), ventasController.obtenerReportes);
-router.get('/:id', ventasController.obtenerPorId);
-router.post('/', roleMiddleware('vendedor', 'administrador', 'gerente'), ventasController.crear);
+router.get('/:id', roleMiddleware('administrador', 'gerente', 'vendedor'), ventasController.obtenerPorId);
+router.post('/', roleMiddleware('vendedor'), ventasController.crear);
 
 module.exports = router;

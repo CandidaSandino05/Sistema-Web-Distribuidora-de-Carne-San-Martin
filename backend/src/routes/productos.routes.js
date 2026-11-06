@@ -6,8 +6,9 @@ const roleMiddleware = require('../middlewares/role.middleware');
 
 router.use(authMiddleware);
 
-router.get('/', productosController.listar);
-router.get('/:id', productosController.obtenerPorId);
+router.get('/', roleMiddleware('administrador', 'gerente', 'vendedor'), productosController.listar);
+router.get('/eliminados/auditoria', roleMiddleware('administrador'), productosController.listarEliminados);
+router.get('/:id', roleMiddleware('administrador', 'gerente', 'vendedor'), productosController.obtenerPorId);
 router.post('/', roleMiddleware('gerente'), productosController.crear);
 router.put('/:id', roleMiddleware('gerente'), productosController.actualizar);
 router.delete('/:id', roleMiddleware('gerente'), productosController.eliminar);

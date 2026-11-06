@@ -9,8 +9,9 @@ module.exports = (req, res, next) => {
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'super_secret_jwt_key_san_martin_2026_production');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    req.usuario = decoded;
     next();
   } catch (err) {
     next(new UnauthorizedError('Token inválido o expirado'));

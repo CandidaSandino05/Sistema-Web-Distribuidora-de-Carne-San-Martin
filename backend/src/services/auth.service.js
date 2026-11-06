@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const db = require('../config/db');
-const queries = require('../models/queries');
 const { UnauthorizedError, ValidationError } = require('../utils/errors');
 
 class AuthService {
@@ -12,53 +11,16 @@ class AuthService {
 
     const cleanIdentifier = String(identifier).trim().toLowerCase();
 
-    let user = null;
-    try {
-      const { rows } = await db.query(queries.usuarios.findByUsernameOrEmail, [cleanIdentifier]);
-      if (rows.length > 0) {
-        user = rows[0];
-      }
-    } catch (e) {
-      user = null;
-    }
+    const { rows } = await db.query(
+      'SELECT * FROM usuarios WHERE usuario = $1',
+      [cleanIdentifier]
+    );
 
-    if (!user) {
-      const mockUsers = {
-        'admin': {
-          id: 1,
-          nombre: 'Carlos Mendoza',
-          usuario: 'admin',
-          correo: 'admin@carnessanmartin.com',
-          password_hash: '$2b$10$.U5OghcHqHLUwpvDIpqeXOJINzllSgWs5yaI5.1zLyF7VDKmp8wm.',
-          rol: 'administrador',
-          activo: true
-        },
-        'gerente': {
-          id: 2,
-          nombre: 'Lucia Fernandez',
-          usuario: 'gerente',
-          correo: 'gerente@carnessanmartin.com',
-          password_hash: '$2b$10$3SL4illn3eO/AhCFmcCupuM0MhLl0ncZ1YezE/evUyLoHURPlF0Va',
-          rol: 'gerente',
-          activo: true
-        },
-        'vendedor': {
-          id: 3,
-          nombre: 'Roberto Gomez',
-          usuario: 'vendedor',
-          correo: 'vendedor@carnessanmartin.com',
-          password_hash: '$2b$10$Z8/jAlQMJPm6ZjstiUwHY.32bbiEypSf0VXtHoHAt/s0pD1DsBAw6',
-          rol: 'vendedor',
-          activo: true
-        }
-      };
-
-      user = mockUsers[cleanIdentifier];
-    }
-
-    if (!user) {
+    if (rows.length === 0) {
       throw new UnauthorizedError('Credenciales inválidas');
     }
+
+    const user = rows[0];
 
     if (!user.activo) {
       throw new UnauthorizedError('La cuenta de usuario está inactiva');
@@ -72,14 +34,14 @@ class AuthService {
     const payload = {
       id: user.id,
       nombre: user.nombre,
-      usuario: user.usuario || cleanIdentifier,
+      usuario: user.usuario,
       correo: user.correo,
       rol: user.rol
     };
 
     const token = jwt.sign(
       payload,
-      process.env.JWT_SECRET || 'super_secret_jwt_key_san_martin_2026_production',
+      process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
     );
 

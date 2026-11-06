@@ -6,9 +6,10 @@ const roleMiddleware = require('../middlewares/role.middleware');
 
 router.use(authMiddleware);
 
-router.get('/kpis', inventarioController.obtenerKpis);
-router.get('/analytics', inventarioController.obtenerAnalytics);
-router.get('/alertas', inventarioController.alertarStockBajo);
+router.get('/kpis', roleMiddleware('administrador', 'gerente'), inventarioController.obtenerKpis);
+router.get('/analytics', roleMiddleware('administrador', 'gerente'), inventarioController.obtenerAnalytics);
+router.get('/alertas', roleMiddleware('administrador', 'gerente'), inventarioController.alertarStockBajo);
+router.get('/mermas', roleMiddleware('administrador'), inventarioController.listarMermas);
 router.post('/mermas', roleMiddleware('gerente'), inventarioController.registrarMerma);
 router.post('/merma', roleMiddleware('gerente'), inventarioController.registrarMerma);
 router.post('/ingreso', roleMiddleware('gerente'), inventarioController.registrarIngreso);
