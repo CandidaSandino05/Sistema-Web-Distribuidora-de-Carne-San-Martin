@@ -19,15 +19,23 @@ if (user.rol !== 'administrador') {
   }
 }
 
-document.getElementById('userName').textContent = user.nombre || 'Administrador';
-document.getElementById('userRole').textContent = (user.rol || 'administrador').toUpperCase();
-document.getElementById('userAvatar').textContent = (user.nombre || 'A').charAt(0).toUpperCase();
+const userNameEl = document.getElementById('userName');
+if (userNameEl) userNameEl.textContent = user.nombre || 'Administrador';
 
-document.getElementById('btnLogout').addEventListener('click', () => {
-  localStorage.removeItem('san_martin_token');
-  localStorage.removeItem('san_martin_user');
-  window.location.href = './login.html';
-});
+const userRoleEl = document.getElementById('userRole');
+if (userRoleEl) userRoleEl.textContent = (user.rol || 'administrador').toUpperCase();
+
+const userAvatarEl = document.getElementById('userAvatar');
+if (userAvatarEl) userAvatarEl.textContent = (user.nombre || 'A').charAt(0).toUpperCase();
+
+const btnLogout = document.getElementById('btnLogout');
+if (btnLogout) {
+  btnLogout.addEventListener('click', () => {
+    localStorage.removeItem('san_martin_token');
+    localStorage.removeItem('san_martin_user');
+    window.location.href = './login.html';
+  });
+}
 
 const btnToggle = document.getElementById('btnToggleSidebar');
 const sidebar = document.getElementById('appSidebar');
@@ -46,13 +54,17 @@ if (backdrop && sidebar) {
   });
 }
 
+const navVentasLink = document.getElementById('navVentasLink');
+if (navVentasLink) {
+  navVentasLink.style.display = 'none';
+}
+
 const nioFormatter = new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' });
 function formatMoney(amount) {
   return nioFormatter.format(parseFloat(amount || 0));
 }
 
 let salesChartInstance = null;
-let categoryChartInstance = null;
 let mermasChartInstance = null;
 
 async function loadAnalytics() {
@@ -75,21 +87,57 @@ async function loadAnalytics() {
     }
 
     renderDashboard(data.data);
+    await loadProductosEliminados();
   } catch (err) {
     renderEmptyDashboard();
+    await loadProductosEliminados();
+  }
+}
+
+async function loadProductosEliminados() {
+  const tbody = document.getElementById('productosEliminadosTableBody');
+  if (!tbody) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/productos/eliminados/auditoria`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) return;
+    const json = await res.json();
+    const list = json.data || [];
+    if (list.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">No hay registros de productos eliminados.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map(item => `
+      <tr>
+        <td>${new Date(item.fecha_eliminacion).toLocaleString('es-NI')}</td>
+        <td><strong style="color: var(--color-primary);">${item.producto_nombre}</strong></td>
+        <td style="text-align: right; font-weight: 700; color: var(--color-danger);">${parseFloat(item.cantidad_stock || 0).toFixed(2)} lb</td>
+        <td>${item.motivo || 'Baja operativa'}</td>
+        <td>${item.usuario_nombre || 'Gerente'}</td>
+      </tr>
+    `).join('');
+  } catch (e) {
+    if (tbody) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">No fue posible cargar el historial de eliminados.</td></tr>';
+    }
   }
 }
 
 function renderDashboard(analytics) {
   const kpis = analytics.kpis || {};
-  document.getElementById('kpiInversion').textContent = formatMoney(kpis.inversion_inventario);
-  document.getElementById('kpiVentasMes').textContent = formatMoney(kpis.ventas_mes);
-  document.getElementById('kpiMargen').textContent = formatMoney(kpis.margen_proyectado);
-  document.getElementById('kpiCxc').textContent = formatMoney(kpis.total_cxc);
+  const invEl = document.getElementById('kpiInversion');
+  const venEl = document.getElementById('kpiVentasMes');
+  const marEl = document.getElementById('kpiMargen');
+  const cxcEl = document.getElementById('kpiCxc');
+
+  if (invEl) invEl.textContent = formatMoney(kpis.inversion_inventario);
+  if (venEl) venEl.textContent = formatMoney(kpis.ventas_mes);
+  if (marEl) marEl.textContent = formatMoney(kpis.margen_proyectado);
+  if (cxcEl) cxcEl.textContent = formatMoney(kpis.total_cxc);
 
   renderSalesChart(analytics.ventas_7_dias || []);
-  renderMermasChart(analytics.mermas_resumen || []);
-  renderCategoryChart(analytics.categorias || []);
+  renderMermasChart(analytics.mermas_7_dias || analytics.mermas_resumen || []);
 
   renderTopProducts(analytics.top_productos || []);
   renderBestClients(analytics.mejores_clientes || []);
@@ -97,14 +145,18 @@ function renderDashboard(analytics) {
 }
 
 function renderEmptyDashboard() {
-  document.getElementById('kpiInversion').textContent = formatMoney(0);
-  document.getElementById('kpiVentasMes').textContent = formatMoney(0);
-  document.getElementById('kpiMargen').textContent = formatMoney(0);
-  document.getElementById('kpiCxc').textContent = formatMoney(0);
+  const invEl = document.getElementById('kpiInversion');
+  const venEl = document.getElementById('kpiVentasMes');
+  const marEl = document.getElementById('kpiMargen');
+  const cxcEl = document.getElementById('kpiCxc');
+
+  if (invEl) invEl.textContent = formatMoney(0);
+  if (venEl) venEl.textContent = formatMoney(0);
+  if (marEl) marEl.textContent = formatMoney(0);
+  if (cxcEl) cxcEl.textContent = formatMoney(0);
 
   renderSalesChart([]);
   renderMermasChart([]);
-  renderCategoryChart([]);
 
   renderTopProducts([]);
   renderBestClients([]);
@@ -112,7 +164,9 @@ function renderEmptyDashboard() {
 }
 
 function renderSalesChart(dataPoints) {
-  const ctx = document.getElementById('salesLineChart').getContext('2d');
+  const canvas = document.getElementById('salesLineChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const ctx = canvas.getContext('2d');
   const labels = dataPoints.map(d => d.label);
   const values = dataPoints.map(d => parseFloat(d.total));
 
@@ -145,7 +199,7 @@ function renderSalesChart(dataPoints) {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            label: (ctx) => `Facturado: ${formatMoney(ctx.raw)}`
+            label: (c) => `Facturado: ${formatMoney(c.raw)}`
           }
         }
       },
@@ -168,29 +222,33 @@ function renderSalesChart(dataPoints) {
 }
 
 function renderMermasChart(mermasData) {
-  const ctx = document.getElementById('mermasChart').getContext('2d');
+  const canvas = document.getElementById('mermasChart');
+  if (!canvas || typeof Chart === 'undefined') return;
+  const ctx = canvas.getContext('2d');
 
   if (mermasChartInstance) {
     mermasChartInstance.destroy();
   }
 
-  const labels = mermasData.map(m => m.producto_nombre);
-  const values = mermasData.map(m => parseFloat(m.costo_perdida));
+  const labels = mermasData.map(m => m.label || m.producto_nombre);
+  const values = mermasData.map(m => parseFloat(m.total_perdida !== undefined ? m.total_perdida : (m.costo_perdida || 0)));
 
   mermasChartInstance = new Chart(ctx, {
-    type: 'bar',
+    type: 'line',
     data: {
       labels: labels,
       datasets: [{
-        label: 'Pérdida en C$',
+        label: 'Pérdidas (C$)',
         data: values,
-        backgroundColor: [
-          '#6A0D14',
-          '#8B0000',
-          '#B3261E',
-          '#C9A84C'
-        ],
-        borderRadius: 4
+        borderColor: '#B3261E',
+        backgroundColor: 'rgba(179, 38, 30, 0.08)',
+        borderWidth: 2.2,
+        fill: true,
+        tension: 0.35,
+        pointBackgroundColor: '#B3261E',
+        pointBorderColor: '#FFFFFF',
+        pointRadius: 4,
+        pointHoverRadius: 6
       }]
     },
     options: {
@@ -207,13 +265,13 @@ function renderMermasChart(mermasData) {
       scales: {
         x: {
           grid: { display: false },
-          ticks: { font: { size: 9, family: 'DM Sans' } }
+          ticks: { font: { size: 10, family: 'DM Sans' } }
         },
         y: {
           border: { dash: [4, 4] },
           grid: { color: 'rgba(120, 120, 120, 0.1)' },
           ticks: {
-            font: { size: 9, family: 'DM Sans' },
+            font: { size: 10, family: 'DM Sans' },
             callback: (v) => 'C$' + v.toLocaleString('es-NI')
           }
         }
@@ -222,52 +280,9 @@ function renderMermasChart(mermasData) {
   });
 }
 
-function renderCategoryChart(categories) {
-  const ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
-
-  if (categoryChartInstance) {
-    categoryChartInstance.destroy();
-  }
-
-  const labels = categories.length > 0 ? categories.map(c => c.nombre) : ['Sin Categorías'];
-  const values = categories.length > 0 ? categories.map(c => c.total) : [0];
-
-  categoryChartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: [
-          '#6A0D14',
-          '#8B0000',
-          '#C9A84C',
-          '#E7DFD5'
-        ],
-        borderWidth: 2,
-        borderColor: '#FFFFFF'
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom',
-          labels: {
-            font: { size: 10, family: 'DM Sans' },
-            boxWidth: 10,
-            padding: 8
-          }
-        }
-      },
-      cutout: '68%'
-    }
-  });
-}
-
 function renderTopProducts(products) {
   const tbody = document.getElementById('topProductsTableBody');
+  if (!tbody) return;
   if (!products || products.length === 0) {
     tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">Sin registros de venta</td></tr>';
     return;
@@ -284,6 +299,7 @@ function renderTopProducts(products) {
 
 function renderBestClients(clients) {
   const tbody = document.getElementById('bestClientsTableBody');
+  if (!tbody) return;
   if (!clients || clients.length === 0) {
     tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-muted); padding: 1.5rem;">Sin clientes destacados</td></tr>';
     return;
@@ -300,6 +316,7 @@ function renderBestClients(clients) {
 
 function renderStockAlerts(alerts) {
   const tbody = document.getElementById('stockAlertsTableBody');
+  if (!tbody) return;
   if (!alerts || alerts.length === 0) {
     tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--color-success); padding: 1.5rem;">Todo el stock se encuentra en niveles óptimos</td></tr>';
     return;
@@ -314,4 +331,8 @@ function renderStockAlerts(alerts) {
   `).join('');
 }
 
-document.addEventListener('DOMContentLoaded', loadAnalytics);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAnalytics);
+} else {
+  loadAnalytics();
+}

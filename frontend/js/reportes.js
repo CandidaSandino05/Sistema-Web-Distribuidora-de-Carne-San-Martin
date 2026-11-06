@@ -54,19 +54,33 @@ if (backdrop && sidebar) {
   });
 }
 
+const navVentasLink = document.getElementById('navVentasLink');
+if (navVentasLink) {
+  navVentasLink.style.display = 'none';
+}
+
 const toastEl = document.getElementById('toast');
 function showToast(message, isError = false) {
   if (!toastEl) return;
   toastEl.textContent = message;
   toastEl.className = 'toast show ' + (isError ? 'toast-error' : 'toast-success');
   setTimeout(() => {
-    toastEl.className = 'toast';
+    if (toastEl) toastEl.className = 'toast';
   }, 3500);
 }
 
 const currencyFormatter = new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' });
 function formatMoney(amount) {
   return currencyFormatter.format(parseFloat(amount || 0));
+}
+
+function formatDate(isoDate) {
+  if (!isoDate) return '-';
+  return new Date(isoDate).toLocaleDateString('es-NI', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 }
 
 const inputDesde = document.getElementById('repDesde');
@@ -91,13 +105,14 @@ if (btnLimpiar) {
   btnLimpiar.addEventListener('click', () => {
     if (inputDesde) inputDesde.value = '';
     if (inputHasta) inputHasta.value = '';
+    document.querySelectorAll('.filter-pill-btn[data-preset]').forEach(b => b.classList.remove('active'));
     loadReportes();
   });
 }
 
 if (btnExportar) {
   btnExportar.addEventListener('click', () => {
-    exportarCsv();
+    exportarExcel();
   });
 }
 
@@ -165,10 +180,10 @@ async function loadReportes() {
     }
 
     reportesData = data.data?.productos || [];
-    renderReportes(data.data || { total_vendido: 0, ganancia_neta: 0, productos: [] });
+    renderReportes(data.data || { total_vendido: 0, ganancia_neta: 0, total_cxc_pendiente: 0, total_morosos: 0, productos: [], cuentas_por_cobrar: [] });
   } catch (err) {
     reportesData = [];
-    renderReportes({ total_vendido: 0, ganancia_neta: 0, productos: [] });
+    renderReportes({ total_vendido: 0, ganancia_neta: 0, total_cxc_pendiente: 0, total_morosos: 0, productos: [], cuentas_por_cobrar: [] });
     showToast(err.message || 'Error al cargar los reportes de ventas', true);
   }
 }
@@ -176,7 +191,10 @@ async function loadReportes() {
 function renderReportes(reportData) {
   const totalVendido = reportData.total_vendido || 0;
   const gananciaNeta = reportData.ganancia_neta || 0;
+  const totalCxcPendiente = reportData.total_cxc_pendiente || 0;
+  const totalMorosos = reportData.total_morosos || 0;
   const productos = reportData.productos || [];
+  const cuentasPorCobrar = reportData.cuentas_por_cobrar || [];
 
   const kpiVendidoEl = document.getElementById('kpiTotalVendido');
   if (kpiVendidoEl) kpiVendidoEl.textContent = formatMoney(totalVendido);
@@ -184,28 +202,92 @@ function renderReportes(reportData) {
   const kpiGananciaEl = document.getElementById('kpiGananciaNeta');
   if (kpiGananciaEl) kpiGananciaEl.textContent = formatMoney(gananciaNeta);
 
+  const kpiCxcReporteEl = document.getElementById('kpiTotalCxcReporte');
+  if (kpiCxcReporteEl) kpiCxcReporteEl.textContent = formatMoney(totalCxcPendiente);
+
+  const kpiMorososSubEl = document.getElementById('kpiMorososSub');
+  if (kpiMorososSubEl) {
+    kpiMorososSubEl.textContent = `${totalMorosos} cuenta${totalMorosos === 1 ? '' : 's'} vencida${totalMorosos === 1 ? '' : 's'} en mora`;
+  }
+
   const tbody = document.getElementById('reportesTableBody');
-  if (!tbody) return;
-  if (!productos || productos.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">No hay ventas en este rango</td></tr>';
+  if (tbody) {
+    if (!productos || productos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">No hay ventas en este rango</td></tr>';
+    } else {
+      tbody.innerHTML = productos.map((p, idx) => `
+        <tr>
+          <td><strong>#${String(p.producto_id || idx + 1).padStart(4, '0')}</strong></td>
+          <td><strong style="color: var(--color-text-main);">${p.producto_nombre}</strong></td>
+          <td class="table-num-cell">${parseFloat(p.cantidad_vendida).toFixed(2)} lb</td>
+          <td class="table-num-cell">${formatMoney(p.precio_unitario)}</td>
+          <td class="table-num-cell" style="color: var(--color-primary);">${formatMoney(p.total_cobrado)}</td>
+          <td class="table-num-cell" style="color: var(--color-success);">${formatMoney(p.ganancia_neta)}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  const cxcTbody = document.getElementById('reportesCxcTableBody');
+  if (cxcTbody) {
+    if (!cuentasPorCobrar || cuentasPorCobrar.length === 0) {
+      cxcTbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--color-success); padding: 2.5rem;">Sin cuentas por cobrar ni clientes morosos pendientes</td></tr>';
+    } else {
+      cxcTbody.innerHTML = cuentasPorCobrar.map(c => {
+        const diasMora = parseInt(c.dias_mora || 0, 10);
+        const esMoroso = Boolean(c.es_moroso) || diasMora > 0;
+        const badgeClass = esMoroso ? 'badge-danger' : 'badge-warning';
+        const badgeText = esMoroso ? `MOROSO (${diasMora} días vencido)` : 'EN PLAZO';
+
+        return `
+          <tr>
+            <td><strong style="color: var(--color-primary);">${c.numero_factura || ('Venta #' + String(c.venta_id).padStart(5, '0'))}</strong></td>
+            <td><strong style="color: var(--color-text-main);">${c.cliente_nombre}</strong></td>
+            <td>${c.cliente_telefono || '-'}</td>
+            <td>${formatDate(c.fecha_vencimiento)}</td>
+            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+            <td class="table-num-cell">${formatMoney(c.monto_original)}</td>
+            <td class="table-num-cell" style="color: var(--color-danger);">${formatMoney(c.saldo_pendiente)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+}
+
+function exportarExcel() {
+  if (!reportesData || reportesData.length === 0) {
+    showToast('No hay datos disponibles para exportar', true);
     return;
   }
 
-  tbody.innerHTML = productos.map((p, idx) => `
-    <tr>
-      <td><strong>#${String(p.producto_id || idx + 1).padStart(4, '0')}</strong></td>
-      <td><strong style="color: var(--color-text-main);">${p.producto_nombre}</strong></td>
-      <td style="text-align: right; font-weight: 600;">${parseFloat(p.cantidad_vendida).toFixed(2)} lb</td>
-      <td style="text-align: right;">${formatMoney(p.precio_unitario)}</td>
-      <td style="text-align: right; font-weight: 700; color: var(--color-primary);">${formatMoney(p.total_cobrado)}</td>
-      <td style="text-align: right; font-weight: 700; color: var(--color-success);">${formatMoney(p.ganancia_neta)}</td>
-    </tr>
-  `).join('');
-}
+  const filename = `reporte_ventas_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
-function exportarCsv() {
-  if (reportesData.length === 0) {
-    showToast('No hay datos disponibles para exportar', true);
+  if (typeof XLSX !== 'undefined') {
+    const dataRows = reportesData.map((p, idx) => ({
+      'Código': p.producto_id || (idx + 1),
+      'Corte Cárnico': p.producto_nombre,
+      'Libras Vendidas (lb)': parseFloat(p.cantidad_vendida || 0),
+      'Precio Venta Unitario (C$)': parseFloat(p.precio_unitario || 0),
+      'Total Facturado (C$)': parseFloat(p.total_cobrado || 0),
+      'Ganancia Neta (C$)': parseFloat(p.ganancia_neta || 0)
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataRows);
+
+    worksheet['!cols'] = [
+      { wch: 12 },
+      { wch: 30 },
+      { wch: 22 },
+      { wch: 25 },
+      { wch: 22 },
+      { wch: 20 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Ventas por Producto');
+    XLSX.writeFile(workbook, filename);
+    showToast('Reporte en Excel descargado exitosamente');
     return;
   }
 

@@ -1,0 +1,68 @@
+.table-reportes-card {
+  background-color: var(--color-surface-card);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-subtle);
+  margin-bottom: 1.75rem;
+}
+
+.table-reportes-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border-light);
+  background-color: var(--color-surface-card);
+}
+
+.table-reportes-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+}
+
+.data-table.table-reportes {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table.table-reportes th {
+  padding: 1rem 1.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-muted);
+  border-bottom: 2px solid var(--color-border-light);
+  white-space: nowrap;
+}
+
+.data-table.table-reportes td {
+  padding: 1.1rem 1.35rem;
+  font-size: 0.88rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--color-border-light);
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table.table-reportes tbody tr:nth-child(even) {
+  background-color: rgba(139, 0, 0, 0.02);
+}
+
+[data-theme="dark"] .data-table.table-reportes tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.025);
+}
+
+.data-table.table-reportes tbody tr:hover {
+  background-color: rgba(139, 0, 0, 0.05) !important;
+  transition: background-color 0.15s ease;
+}
+
+.table-num-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}

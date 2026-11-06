@@ -10,35 +10,71 @@ if (!token || !userStr) {
 }
 
 const user = JSON.parse(userStr || '{}');
+const userRole = (user.rol || '').toLowerCase();
 
-document.getElementById('userName').textContent = user.nombre || 'Usuario';
-document.getElementById('userRole').textContent = (user.rol || 'usuario').toUpperCase();
-document.getElementById('userAvatar').textContent = (user.nombre || 'U').charAt(0).toUpperCase();
+if (userRole === 'vendedor') {
+  window.location.href = './ventas.html';
+}
 
+const userNameEl = document.getElementById('userName');
+if (userNameEl) userNameEl.textContent = user.nombre || 'Usuario';
+
+const userRoleEl = document.getElementById('userRole');
+if (userRoleEl) userRoleEl.textContent = (user.rol || 'usuario').toUpperCase();
+
+const userAvatarEl = document.getElementById('userAvatar');
+if (userAvatarEl) userAvatarEl.textContent = (user.nombre || 'U').charAt(0).toUpperCase();
+
+const navDashboard = document.getElementById('navDashboardLink');
 const navInventario = document.getElementById('navInventarioLink');
+const navMatadero = document.getElementById('navMataderoLink');
 const navVentas = document.getElementById('navVentasLink');
+const navFacturas = document.getElementById('navFacturasLink');
 const navCxc = document.getElementById('navCxcLink');
+const navReportes = document.getElementById('navReportesLink');
+const navMermas = document.getElementById('navMermasLink');
 const btnOpenClienteModal = document.getElementById('btnOpenClienteModal');
 const cliTelefonoInput = document.getElementById('cliTelefono');
 const cliTelefonoError = document.getElementById('cliTelefonoError');
 
-if (user.rol === 'vendedor') {
-  if (navInventario) navInventario.style.display = 'none';
-  if (navVentas) navVentas.style.display = '';
-  if (navCxc) navCxc.style.display = '';
-  if (btnOpenClienteModal) btnOpenClienteModal.style.display = 'none';
-} else if (user.rol === 'gerente') {
-  if (navInventario) navInventario.style.display = '';
+if (userRole === 'administrador') {
+  if (navDashboard) navDashboard.style.display = 'flex';
+  if (navInventario) navInventario.style.display = 'flex';
+  if (navMatadero) navMatadero.style.display = 'flex';
   if (navVentas) navVentas.style.display = 'none';
-  if (navCxc) navCxc.style.display = '';
-  if (btnOpenClienteModal) btnOpenClienteModal.style.display = '';
+  if (navFacturas) navFacturas.style.display = 'flex';
+  if (navCxc) navCxc.style.display = 'flex';
+  if (navMermas) navMermas.style.display = 'flex';
+  if (navReportes) navReportes.style.display = 'flex';
+  if (btnOpenClienteModal) btnOpenClienteModal.style.display = 'none';
+} else if (userRole === 'gerente') {
+  if (navDashboard) navDashboard.style.display = 'none';
+  if (navInventario) navInventario.style.display = 'flex';
+  if (navMatadero) navMatadero.style.display = 'none';
+  if (navVentas) navVentas.style.display = 'none';
+  if (navFacturas) navFacturas.style.display = 'flex';
+  if (navCxc) navCxc.style.display = 'flex';
+  if (navReportes) navReportes.style.display = 'none';
+  if (btnOpenClienteModal) btnOpenClienteModal.style.display = 'inline-flex';
+} else if (userRole === 'vendedor') {
+  if (navDashboard) navDashboard.style.display = 'none';
+  if (navInventario) navInventario.style.display = 'none';
+  if (navMatadero) navMatadero.style.display = 'none';
+  if (navVentas) navVentas.style.display = 'flex';
+  if (navFacturas) navFacturas.style.display = 'flex';
+  if (navCxc) navCxc.style.display = 'flex';
+  if (navReportes) navReportes.style.display = 'none';
+  if (btnOpenClienteModal) btnOpenClienteModal.style.display = 'none';
 }
 
-document.getElementById('btnLogout').addEventListener('click', () => {
-  localStorage.removeItem('san_martin_token');
-  localStorage.removeItem('san_martin_user');
-  window.location.href = './login.html';
-});
+const btnLogout = document.getElementById('btnLogout');
+if (btnLogout) {
+  btnLogout.addEventListener('click', () => {
+    localStorage.removeItem('san_martin_token');
+    localStorage.removeItem('san_martin_user');
+    window.location.href = './login.html';
+  });
+}
 
 const btnToggle = document.getElementById('btnToggleSidebar');
 const sidebar = document.getElementById('appSidebar');
@@ -59,10 +95,11 @@ if (backdrop && sidebar) {
 
 const toastEl = document.getElementById('toast');
 function showToast(message, isError = false) {
+  if (!toastEl) return;
   toastEl.textContent = message;
   toastEl.className = 'toast show ' + (isError ? 'toast-error' : 'toast-success');
   setTimeout(() => {
-    toastEl.className = 'toast';
+    if (toastEl) toastEl.className = 'toast';
   }, 3500);
 }
 
@@ -81,11 +118,13 @@ function formatDate(isoDate) {
 }
 
 function openModal(id) {
-  document.getElementById(id).classList.add('open');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
 }
 
 window.openModal = openModal;
@@ -104,8 +143,8 @@ if (cliTelefonoInput) {
 
 if (btnOpenClienteModal) {
   btnOpenClienteModal.addEventListener('click', () => {
-    if (user.rol === 'vendedor') {
-      showToast('No tiene permisos para crear clientes', true);
+    if (userRole !== 'gerente') {
+      showToast('Solo el rol de Gerente puede registrar nuevos clientes', true);
       return;
     }
     if (cliTelefonoError) cliTelefonoError.style.display = 'none';
@@ -137,7 +176,7 @@ async function loadClients() {
     }
   } catch (err) {
     clientsData = [];
-    showToast(err.message, true);
+    showToast(err.message || 'Error al obtener clientes', true);
   }
 
   renderClients(clientsData);
@@ -145,20 +184,22 @@ async function loadClients() {
 
 function renderClients(list) {
   const tableBody = document.getElementById('clientesTableBody');
+  if (!tableBody) return;
+
   if (!list || list.length === 0) {
     tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">No se encontraron clientes registrados</td></tr>';
     return;
   }
 
   tableBody.innerHTML = list.map(c => {
-    const initials = c.nombre.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+    const initials = (c.nombre || 'C').split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
     return `
       <tr>
         <td><strong>#${String(c.id).padStart(4, '0')}</strong></td>
         <td>
           <div style="display: flex; align-items: center;">
             <div class="client-avatar-badge">${initials}</div>
-            <strong style="color: #1A1A1A;">${c.nombre}</strong>
+            <strong style="color: var(--color-text-main);">${c.nombre}</strong>
           </div>
         </td>
         <td>${c.telefono || '-'}</td>
@@ -173,94 +214,143 @@ function renderClients(list) {
           </span>
         </td>
         <td style="text-align: right;">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="verHistorial(${c.id}, '${c.nombre.replace(/'/g, "\\'")}')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-            Historial de Compras
-          </button>
+          <div style="display: inline-flex; gap: 0.35rem; align-items: center;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="verHistorial(${c.id}, '${String(c.nombre).replace(/'/g, "\\'")}')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+              Historial
+            </button>
+            ${String(c.nombre || '').toLowerCase().includes('consumidor final') ? '' : `
+              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleEstadoCliente(${c.id}, ${!c.activo}, '${String(c.nombre).replace(/'/g, "\\'")}')" style="font-size: 0.75rem; padding: 0.25rem 0.5rem; ${c.activo ? 'color: var(--color-danger); border-color: rgba(211,47,47,0.3);' : 'color: var(--color-success); border-color: rgba(46,125,50,0.3);'}">
+                ${c.activo ? 'Inactivar' : 'Activar'}
+              </button>
+            `}
+          </div>
         </td>
       </tr>
     `;
   }).join('');
 }
 
-const searchCliente = document.getElementById('searchCliente');
+window.toggleEstadoCliente = async function(id, nuevoEstado, nombre) {
+  const advertencia = nuevoEstado
+    ? `¿Desea activar al cliente "${nombre}"? Volverá a estar disponible en el punto de venta.`
+    : `¿Desea inactivar al cliente "${nombre}"? No aparecerá para ventas nuevas en el POS (mantendrá su historial y saldo en CxC si adeuda).`;
+
+  if (!confirm(advertencia)) return;
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/clientes/${id}/estado`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ activo: nuevoEstado })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Error al actualizar estado del cliente');
+    }
+
+    showToast(`Cliente "${nombre}" ${nuevoEstado ? 'activado' : 'inactivado'} exitosamente`);
+    await loadClients();
+  } catch (err) {
+    showToast(err.message, true);
+  }
+};
+
+const searchCliente = document.getElementById('clientSearchInput') || document.getElementById('searchCliente');
 if (searchCliente) {
   searchCliente.addEventListener('input', (e) => {
     const q = e.target.value.toLowerCase().trim();
     const filtered = clientsData.filter(c =>
-      c.nombre.toLowerCase().includes(q) ||
+      (c.nombre && c.nombre.toLowerCase().includes(q)) ||
       (c.telefono && c.telefono.includes(q)) ||
+      (c.email && c.email.toLowerCase().includes(q)) ||
       (c.direccion && c.direccion.toLowerCase().includes(q))
     );
     renderClients(filtered);
   });
 }
 
-document.getElementById('formNuevoCliente').addEventListener('submit', async (e) => {
-  e.preventDefault();
+const formNuevoCliente = document.getElementById('formNuevoCliente');
+if (formNuevoCliente) {
+  formNuevoCliente.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  if (user.rol === 'vendedor') {
-    showToast('No tiene permisos para crear clientes', true);
-    return;
-  }
-
-  const rawTelefono = document.getElementById('cliTelefono').value.replace(/\D/g, '').trim();
-  if (rawTelefono.length < 8) {
-    if (cliTelefonoError) cliTelefonoError.style.display = 'block';
-    showToast('El teléfono debe tener exactamente 8 dígitos', true);
-    document.getElementById('cliTelefono').focus();
-    return;
-  }
-  if (cliTelefonoError) cliTelefonoError.style.display = 'none';
-
-  const telefono = `+505${rawTelefono}`;
-  const nombre = document.getElementById('cliNombre').value.trim();
-  const direccion = document.getElementById('cliDireccion').value.trim();
-  const email = document.getElementById('cliEmail').value.trim();
-  const limite_credito = parseFloat(document.getElementById('cliLimiteCredito').value || 0);
-
-  const payload = {
-    nombre,
-    telefono,
-    direccion,
-    email,
-    limite_credito,
-    activo: true
-  };
-
-  const btnSubmit = document.getElementById('btnGuardarCliente');
-  btnSubmit.disabled = true;
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/clientes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || 'Error al guardar cliente');
+    if (userRole !== 'gerente') {
+      showToast('Solo el Gerente tiene permisos para crear clientes', true);
+      return;
     }
 
-    showToast('Cliente registrado exitosamente');
-    closeModal('modalCliente');
-    document.getElementById('formNuevoCliente').reset();
+    const rawTelefono = cliTelefonoInput ? cliTelefonoInput.value.replace(/\D/g, '').trim() : '';
+    if (rawTelefono.length < 8) {
+      if (cliTelefonoError) cliTelefonoError.style.display = 'block';
+      showToast('El teléfono debe tener exactamente 8 dígitos', true);
+      if (cliTelefonoInput) cliTelefonoInput.focus();
+      return;
+    }
     if (cliTelefonoError) cliTelefonoError.style.display = 'none';
-    await loadClients();
-  } catch (err) {
-    showToast(err.message || 'Error al guardar cliente', true);
-  } finally {
-    btnSubmit.disabled = false;
-  }
-});
+
+    const telefono = `+505${rawTelefono}`;
+    const nombreEl = document.getElementById('cliNombre');
+    const dirEl = document.getElementById('cliDireccion');
+    const emailEl = document.getElementById('cliEmail');
+    const limEl = document.getElementById('cliLimiteCredito');
+
+    const nombre = nombreEl ? nombreEl.value.trim() : '';
+    const direccion = dirEl ? dirEl.value.trim() : '';
+    const email = emailEl ? emailEl.value.trim() : '';
+    const limite_credito = parseFloat((limEl && limEl.value) ? limEl.value : 0);
+
+    const payload = {
+      nombre,
+      telefono,
+      direccion,
+      email,
+      limite_credito,
+      activo: true
+    };
+
+    const btnSubmit = document.getElementById('btnGuardarCliente');
+    if (btnSubmit) btnSubmit.disabled = true;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/clientes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Error al guardar cliente');
+      }
+
+      showToast('Cliente registrado exitosamente');
+      closeModal('modalCliente');
+      formNuevoCliente.reset();
+      if (cliTelefonoError) cliTelefonoError.style.display = 'none';
+      await loadClients();
+    } catch (err) {
+      showToast(err.message || 'Error al guardar cliente', true);
+    } finally {
+      if (btnSubmit) btnSubmit.disabled = false;
+    }
+  });
+}
 
 window.verHistorial = async function(clienteId, clienteNombre) {
-  document.getElementById('historialClienteNombre').textContent = `Historial: ${clienteNombre}`;
+  const histNombreEl = document.getElementById('historialClienteNombre');
+  if (histNombreEl) histNombreEl.textContent = `Historial: ${clienteNombre}`;
+
   const container = document.getElementById('historialContent');
-  container.innerHTML = '<div style="text-align: center; padding: 2rem;">Cargando historial de compras...</div>';
+  if (container) {
+    container.innerHTML = '<div style="text-align: center; padding: 2rem;">Cargando historial de compras...</div>';
+  }
   openModal('modalHistorial');
 
   try {
@@ -275,7 +365,9 @@ window.verHistorial = async function(clienteId, clienteNombre) {
       throw new Error(data.error || 'Error al obtener historial');
     }
 
-    const ventas = data.data;
+    const ventas = data.data || [];
+    if (!container) return;
+
     if (ventas.length === 0) {
       container.innerHTML = '<div style="text-align: center; color: var(--color-text-muted); padding: 2rem;">No hay registros de compras previas para este cliente.</div>';
       return;
@@ -296,7 +388,7 @@ window.verHistorial = async function(clienteId, clienteNombre) {
           <tbody>
             ${ventas.map(v => `
               <tr>
-                <td><strong>#${String(v.id).padStart(5, '0')}</strong></td>
+                <td><strong>${v.numero_factura || ('#' + String(v.id).padStart(5, '0'))}</strong></td>
                 <td>${formatDate(v.fecha)}</td>
                 <td style="text-transform: capitalize;">${v.tipo_pago}</td>
                 <td style="font-weight: 700;">${formatMoney(v.total)}</td>
@@ -312,8 +404,15 @@ window.verHistorial = async function(clienteId, clienteNombre) {
       </div>
     `;
   } catch (err) {
+    if (container) {
+      container.innerHTML = `<div style="text-align: center; color: var(--color-danger); padding: 2rem;">${err.message || 'Error al obtener historial'}</div>`;
+    }
     showToast(err.message || 'Error al obtener historial', true);
   }
 };
 
-document.addEventListener('DOMContentLoaded', loadClients);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadClients);
+} else {
+  loadClients();
+}

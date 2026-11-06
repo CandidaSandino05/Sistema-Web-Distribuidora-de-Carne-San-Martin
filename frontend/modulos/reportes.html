@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Módulo de Reportes y Rentabilidad | Carnes San Martín</title>
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+  <link rel="stylesheet" href="../css/reportes.css">
 </head>
 <body>
   <div class="app-layout">
@@ -26,15 +29,39 @@
         </div>
       </div>
       <nav class="sidebar-nav" id="sidebarNav">
-        <a href="./dashboard.html" class="nav-item">
+        <a href="./dashboard.html" class="nav-item" id="navDashboardLink">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           Dashboard
         </a>
-        <a href="./inventario.html" class="nav-item">
+        <a href="./inventario.html" class="nav-item" id="navInventarioLink">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
           Inventario
         </a>
-        <a href="./reportes.html" class="nav-item active">
+        <a href="./matadero.html" class="nav-item" id="navMataderoLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path></svg>
+          Deuda Matadero
+        </a>
+        <a href="./ventas.html" class="nav-item" id="navVentasLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          Ventas
+        </a>
+        <a href="./facturas.html" class="nav-item" id="navFacturasLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Facturas
+        </a>
+        <a href="./clientes.html" class="nav-item" id="navClientesLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Clientes
+        </a>
+        <a href="./cuentas.html" class="nav-item" id="navCxcLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Cuentas por Cobrar
+        </a>
+        <a href="./mermas.html" class="nav-item" id="navMermasLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Mermas
+        </a>
+        <a href="./reportes.html" class="nav-item active" id="navReportesLink">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
           Reportes
         </a>
@@ -59,13 +86,14 @@
           </button>
           <div>
             <h1 class="header-title">Reportes Financieros y Rentabilidad</h1>
-            <span style="font-size: 0.82rem; color: var(--color-text-muted);">Auditoría de ventas por período y márgenes netos en Córdobas (C$)</span>
+            <span style="font-size: 0.82rem; color: var(--color-text-muted);">Auditoría de ventas por período, márgenes netos y morosidad en Córdobas (C$)</span>
           </div>
         </div>
         <div class="header-actions">
           <button type="button" class="theme-toggle-btn" aria-label="Cambiar tema">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
           </button>
+          <button type="button" class="btn btn-secondary btn-sm" id="btnExportarCsv">Exportar Excel</button>
           <span class="badge badge-info">Auditoría Ejecutiva</span>
         </div>
       </header>
@@ -83,6 +111,7 @@
               <input type="date" id="repHasta" class="form-control form-control-sm">
             </div>
             <button type="button" class="btn btn-primary btn-sm" id="btnFiltrarReporte">Filtrar Rango</button>
+            <button type="button" class="btn btn-secondary btn-sm" id="btnLimpiarFiltros">Ver Todo</button>
           </div>
           <div style="display: flex; gap: 0.4rem;">
             <button type="button" class="filter-pill-btn" data-preset="hoy">Hoy</button>
@@ -91,7 +120,7 @@
           </div>
         </section>
 
-        <section class="bi-kpi-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 1.5rem;">
+        <section class="bi-kpi-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 1.5rem;">
           <article class="bi-kpi-card accent-gold">
             <span class="bi-kpi-label">Total Vendido en el Rango</span>
             <span class="bi-kpi-value" id="kpiTotalVendido">C$0.00</span>
@@ -101,29 +130,60 @@
           <article class="bi-kpi-card">
             <span class="bi-kpi-label">Ganancia Neta Total</span>
             <span class="bi-kpi-value" id="kpiGananciaNeta" style="color: var(--color-success);">C$0.00</span>
-            <span class="bi-kpi-sub">Margen líquido (Precio Venta - Precio Compra)</span>
+            <span class="bi-kpi-sub">Margen líquido sobre ventas del período</span>
+          </article>
+
+          <article class="bi-kpi-card">
+            <span class="bi-kpi-label">Cartera por Cobrar / Morosidad</span>
+            <span class="bi-kpi-value" id="kpiTotalCxcReporte" style="color: var(--color-primary);">C$0.00</span>
+            <span class="bi-kpi-sub" id="kpiMorososSub">0 cuentas vencidas en mora</span>
           </article>
         </section>
 
-        <section class="table-responsive">
-          <div style="padding: 1.25rem 1.5rem 0.5rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--color-text-main);">Tabla Detallada de Productos Vendidos</h3>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Desglose por corte cárnico</span>
+        <section class="table-responsive table-reportes-card">
+          <div class="table-reportes-header">
+            <h3 class="table-reportes-title">Tabla Detallada de Productos Vendidos</h3>
+            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Desglose de volumen y rentabilidad por corte cárnico</span>
           </div>
-          <table class="data-table">
+          <table class="data-table table-reportes">
             <thead>
               <tr>
                 <th>Código</th>
                 <th>Producto / Corte Cárnico</th>
-                <th style="text-align: right;">Cantidad Vendida (Lb)</th>
-                <th style="text-align: right;">Precio Unitario (C$)</th>
-                <th style="text-align: right;">Total Cobrado (C$)</th>
-                <th style="text-align: right;">Ganancia Neta (C$)</th>
+                <th class="table-num-cell">Cantidad Vendida (Lb)</th>
+                <th class="table-num-cell">Precio Unitario (C$)</th>
+                <th class="table-num-cell">Total Cobrado (C$)</th>
+                <th class="table-num-cell">Ganancia Neta (C$)</th>
               </tr>
             </thead>
             <tbody id="reportesTableBody">
               <tr>
                 <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 3rem;">Generando reporte detallado...</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="table-responsive table-reportes-card">
+          <div class="table-reportes-header">
+            <h3 class="table-reportes-title">Reporte de Cuentas por Cobrar y Clientes Morosos</h3>
+            <span class="badge badge-danger">Auditoría de Cartera Activa</span>
+          </div>
+          <table class="data-table table-reportes">
+            <thead>
+              <tr>
+                <th>Factura</th>
+                <th>Cliente Mayorista</th>
+                <th>Teléfono</th>
+                <th>Fecha Vencimiento</th>
+                <th>Situación Crediticia</th>
+                <th class="table-num-cell">Monto Original (C$)</th>
+                <th class="table-num-cell">Saldo Pendiente (C$)</th>
+              </tr>
+            </thead>
+            <tbody id="reportesCxcTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">Consultando estado de cartera...</td>
               </tr>
             </tbody>
           </table>
@@ -134,6 +194,7 @@
 
   <div id="toast" class="toast"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="../js/theme.js"></script>
   <script src="../js/reportes.js"></script>
 </body>

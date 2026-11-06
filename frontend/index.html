@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Distribuidora de Carnes San Martín | Mercado Mayoreo</title>
-  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/variables.css">
+  <link rel="stylesheet" href="./css/global.css">
 </head>
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <a href="./index.html" class="site-brand">
-        <span class="brand-title">SAN MARTÍN<span class="brand-point">.</span></span>
-      </a>
+<a href="./index.html" class="site-brand header-logo">
+  <img src="./assets/img/logo.svg" alt="Carnes San Martín" class="logo-img">
+</a>
       <nav class="site-nav">
         <a href="#inicio">Inicio</a>
         <a href="#nosotros">Nosotros</a>
@@ -57,10 +58,19 @@
           </div>
         </div>
         <div class="hero-visual">
-          <div class="visual-card">
-            <img src="https://images.unsplash.com/photo-1603048297172-c92544798d5a?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="Cortes de carne premium San Martín" class="hero-img">
+          <div class="visual-card" id="heroCarousel">
+            <div class="carousel-slides">
+              <img src="assets/img/carrusel-1.jpg" alt="Cortes de carne premium San Martín" class="carousel-slide active">
+              <img src="assets/img/carrusel-2.jpg" alt="Distribución cárnica mayorista Nicaragua" class="carousel-slide">
+              <img src="assets/img/carrusel-3.jpg" alt="Cadena de frío y calidad San Martín" class="carousel-slide">
+            </div>
+            <div class="carousel-indicators">
+              <button type="button" class="indicator-dot active" aria-label="Slide 1"></button>
+              <button type="button" class="indicator-dot" aria-label="Slide 2"></button>
+              <button type="button" class="indicator-dot" aria-label="Slide 3"></button>
+            </div>
             <div class="floating-stamp">
-              <span class="stamp-year"></span>
+              <span class="stamp-year">SAN MARTÍN</span>
               <span class="stamp-text">Managua • Nicaragua</span>
             </div>
           </div>
@@ -227,84 +237,100 @@
 
     <section id="contacto" class="contact-block">
       <div class="content-wrapper">
-        <div class="contact-grid">
-          <div class="contact-intro">
-            <span class="contact-kicker">ATENCIÓN MAYORISTA</span>
-            <h2 class="contact-heading">Contacto y Ubicación</h2>
-            <p class="contact-lead">Atendemos pedidos a gran escala para distribuidores, restaurantes y carnicerías con entregas seguras.</p>
-            <div class="contact-info-list">
-              <div class="contact-info-card">
-                <div class="contact-card-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
-                <div>
-                  <h4 class="contact-card-label">Dirección</h4>
-                  <p class="contact-card-val">Ubicados en el Mercado Mayoreo, Managua, Nicaragua. Atención de Lunes a Domingo.</p>
-                </div>
-              </div>
+        <div class="section-title-wrap text-center">
+          <span class="contact-kicker">ATENCIÓN MAYORISTA</span>
+          <h2 class="contact-heading">Contacto y Ubicación</h2>
+          <p class="section-sub-copy">Visítenos en nuestras instalaciones o envíenos sus requerimientos de volumen para cotización y despacho inmediato.</p>
+        </div>
 
-              <div class="contact-info-card">
-                <div class="contact-card-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                </div>
-                <div>
-                  <h4 class="contact-card-label">Teléfonos de Contacto</h4>
-                  <p class="contact-card-val">+505 5501-9626 / +505 5501-9626</p>
-                </div>
-              </div>
-
-              <div class="contact-info-card">
-                <div class="contact-card-icon">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                </div>
-                <div>
-                  <h4 class="contact-card-label">Horario de Operaciones</h4>
-                  <p class="contact-card-val">Lunes a Domingo: 6:30 AM - 4:00 PM</p>
-                </div>
-              </div>
-            </div>
-
-            <div class="contact-whatsapp-wrap">
-              <a href="https://wa.me/50555019626?text=Hola,%20deseo%20cotizar%20cortes%20al%20por%20mayor%20en%20Carnes%20San%20Martín" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                <span>Chatear por WhatsApp</span>
-              </a>
-            </div>
+        <div class="location-split-block">
+          <div class="location-map-wrap">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d487.583580177334!2d-86.19435930335928!3d12.134809477321685!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f73ff58cff5a867%3A0x57e3b17188ef6d86!2sCarneceria%20San%20Martin%20Mayoreo!5e0!3m2!1ses-419!2sni!4v1793908248750!5m2!1ses-419!2sni" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           </div>
+          <div class="location-info-wrap">
+            <div class="contact-info-card">
+              <div class="contact-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <h4 class="contact-card-label">Dirección</h4>
+                <p class="contact-card-val">Villa Venezuela / Mercado Mayoreo, Managua, Nicaragua.</p>
+              </div>
+            </div>
 
+            <div class="contact-info-card">
+              <div class="contact-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </div>
+              <div>
+                <h4 class="contact-card-label">Horario de Operaciones</h4>
+                <p class="contact-card-val">Lunes a Domingo: 6:30 AM - 4:00 PM</p>
+              </div>
+            </div>
+
+            <div class="contact-info-card">
+              <div class="contact-card-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <div>
+                <h4 class="contact-card-label">Teléfono de Contacto</h4>
+                <p class="contact-card-val">+505 5501-9626</p>
+              </div>
+            </div>
+
+            <a href="https://wa.me/50555019626" target="_blank" rel="noopener noreferrer" class="btn-whatsapp">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <span>Chatear por WhatsApp</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="wholesale-quote-section">
           <div class="contact-form-panel">
             <h3 class="form-title">Solicitar Cotización de Mayoreo</h3>
-            <p class="form-subtitle">Envíenos sus requerimientos de volumen y un ejecutivo comercial le contactará en minutos.</p>
-            <form class="wholesale-form" onsubmit="event.preventDefault(); alert('Solicitud recibida. Un ejecutivo de Carnes San Martín le contactará a la brevedad.');">
-              <div class="input-cell">
-                <label for="leadName" class="cell-label">Nombre o Negocio / Carnicería</label>
-                <input type="text" id="leadName" class="cell-input" placeholder="Ej. Restaurante El Fogón" required>
+            <p class="form-subtitle">Envíenos sus requerimientos de volumen y un ejecutivo comercial le contactará en minutos vía WhatsApp.</p>
+            <form id="wholesaleForm" class="wholesale-form" novalidate>
+              <div class="form-grid-row">
+                <div class="input-cell">
+                  <label for="leadName" class="cell-label">Nombre o Negocio / Carnicería</label>
+                  <input type="text" id="leadName" class="cell-input" placeholder="Ej. Restaurante El Fogón" required>
+                  <span id="nameError" class="input-error-msg"></span>
+                </div>
+                <div class="input-cell">
+                  <label for="leadPhone" class="cell-label">Teléfono / WhatsApp (8 dígitos)</label>
+                  <div class="phone-input-group">
+                    <span class="phone-prefix">+505</span>
+                    <input type="tel" id="leadPhone" class="cell-input phone-input-field" placeholder="8888 8888" maxlength="8" inputmode="numeric" required>
+                  </div>
+                  <span id="phoneError" class="input-error-msg"></span>
+                </div>
               </div>
-              <div class="input-cell">
-                <label for="leadPhone" class="cell-label">Teléfono / WhatsApp</label>
-                <input type="tel" id="leadPhone" class="cell-input" placeholder="+505 8888-0000" required>
+              <div class="form-grid-row">
+                <div class="input-cell">
+                  <label for="leadProduct" class="cell-label">Corte o Producto de Interés</label>
+                  <select id="leadProduct" class="cell-input">
+                    <option value="Corbata de Res">Corbata de Res</option>
+                    <option value="Brocheta de Cerdo">Brocheta de Cerdo</option>
+                    <option value="Lomo Fino">Lomo Fino</option>
+                    <option value="Tortas de Carne">Tortas de Carne</option>
+                    <option value="Costilla de Cerdo">Costilla de Cerdo</option>
+                    <option value="Pechuga Deshuesada">Pechuga Deshuesada</option>
+                    <option value="Pedido Mixto / Múltiples Cortes">Pedido Mixto / Múltiples Cortes</option>
+                  </select>
+                </div>
+                <div class="input-cell">
+                  <label for="leadVolume" class="cell-label">Volumen Estimado Semanal</label>
+                  <select id="leadVolume" class="cell-input">
+                    <option value="50 a 200 Libras">50 a 200 Libras</option>
+                    <option value="200 a 1,000 Libras">200 a 1,000 Libras</option>
+                    <option value="Más de 1,000 Libras (Mayorista)">Más de 1,000 Libras (Mayorista)</option>
+                  </select>
+                </div>
               </div>
-              <div class="input-cell">
-                <label for="leadProduct" class="cell-label">Corte o Producto de Interés</label>
-                <select id="leadProduct" class="cell-input">
-                  <option value="corbata">Corbata de Res</option>
-                  <option value="brocheta">Brocheta de Cerdo</option>
-                  <option value="lomo">Lomo Fino</option>
-                  <option value="tortas">Tortas de Carne</option>
-                  <option value="costilla">Costilla de Cerdo</option>
-                  <option value="pollo">Pechuga Deshuesada</option>
-                  <option value="mixto">Pedido Mixto / Múltiples Cortes</option>
-                </select>
-              </div>
-              <div class="input-cell">
-                <label for="leadVolume" class="cell-label">Volumen Estimado Semanal</label>
-                <select id="leadVolume" class="cell-input">
-                  <option value="v1">50 a 200 Libras</option>
-                  <option value="v2">200 a 1,000 Libras</option>
-                  <option value="v3">Más de 1,000 Libras (Mayorista)</option>
-                </select>
-              </div>
-              <button type="submit" class="btn-submit-order">Enviar Solicitud Mayorista</button>
+              <button type="submit" class="btn-submit-order" id="btnSubmitOrder">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <span>Enviar Solicitud Mayorista</span>
+              </button>
             </form>
           </div>
         </div>
@@ -316,26 +342,152 @@
     <div class="content-wrapper">
       <div class="footer-grid">
         <div class="footer-brand-col">
-          <span class="footer-brand-title">SAN MARTÍN<span class="brand-point">.</span></span>
-          <p class="footer-brand-desc">Distribuidora de Carnes San Martín. Calidad, higiene y tradición. Managua, Nicaragua.</p>
+          <a href="./index.html" class="footer-brand-title">SAN MARTÍN<span class="brand-point">.</span></a>
+          <span class="footer-brand-tag">MERCADO MAYOREO</span>
+          <p class="footer-brand-desc">Distribuidora de Carnes San Martín. Más de 40 años abasteciendo al sector gastronómico, carnicerías y distribuidores mayoristas con cortes frescos y la más rigurosa cadena de frío en Nicaragua.</p>
         </div>
+
         <div class="footer-links-col">
-          <h5 class="footer-col-heading">Enlaces Rápidos</h5>
+          <h5 class="footer-col-heading">Empresa</h5>
           <ul class="footer-nav-list">
             <li><a href="#inicio">Inicio</a></li>
             <li><a href="#nosotros">Nosotros</a></li>
             <li><a href="#catalogo">Catálogo</a></li>
             <li><a href="#contacto">Contacto</a></li>
-            <li><a href="./modulos/login.html">Acceso al Sistema</a></li>
           </ul>
         </div>
+
+        <div class="footer-links-col">
+          <h5 class="footer-col-heading">Legal y Políticas</h5>
+          <ul class="footer-nav-list">
+            <li><a href="#" class="legal-modal-trigger" data-legal="privacidad">Políticas de Privacidad</a></li>
+            <li><a href="#" class="legal-modal-trigger" data-legal="terminos">Términos de Uso</a></li>
+            <li><a href="#" class="legal-modal-trigger" data-legal="seguridad">Seguridad de Datos</a></li>
+            <li><a href="#" class="legal-modal-trigger" data-legal="inocuidad">Cadena de Frío e Inocuidad</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-contact-col">
+          <h5 class="footer-col-heading">Contacto y Sistema</h5>
+          <ul class="footer-contact-list">
+            <li class="footer-contact-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>ventas@carnessanmartin.com.ni</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>+505 5501-9626</span>
+            </li>
+            <li class="footer-contact-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Mercado Mayoreo / Villa Venezuela, Managua</span>
+            </li>
+          </ul>
+          <a href="./modulos/login.html" class="btn-footer-portal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Acceso al Sistema</span>
+          </a>
+        </div>
       </div>
+
       <div class="footer-bottom-bar">
-        <span>&copy; 2026 Distribuidora de Carnes San Martín. Todos los derechos reservados.</span>
-        <span>Managua, Nicaragua</span>
+        <span>&copy; <span id="currentYear">2026</span> Distribuidora de Carnes San Martín. Todos los derechos reservados.</span>
+        <span>Managua, Nicaragua • Cadena de Frío Garantizada</span>
       </div>
     </div>
   </footer>
+
+  <a href="https://wa.me/50555019626" class="floating-whatsapp-btn" target="_blank" rel="noopener noreferrer" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.746.953 3.71 1.456 5.711 1.457h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <div id="modalPrivacidad" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Políticas de Privacidad y Tratamiento de Datos</h3>
+        <button type="button" class="modal-close" data-close-modal aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.92rem; line-height: 1.65; color: var(--color-text-main);">
+        <p style="margin-bottom: 1rem;"><strong>Distribuidora de Carnes San Martín</strong>, con base de operaciones en Managua, Nicaragua, asume el compromiso formal de resguardar la privacidad, confidencialidad e integridad de la información comercial, fiscal y de contacto de nuestros clientes mayoristas, carnicerías, cadenas gastronómicas y distribuidores autorizados.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">1. Finalidad de los Datos Comerciales</h4>
+        <p style="margin-bottom: 1rem;">Los datos proporcionados a través de nuestro sitio web, cotizaciones de WhatsApp y plataforma de gestión (tales como RUC, razón social, contactos autorizados, números telefónicos y direcciones de entrega) son utilizados exclusivamente para la emisión de facturas legales, despacho de pedidos mayoristas, control de cuentas por cobrar y análisis de crédito mercantil.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">2. Confidencialidad Absoluta</h4>
+        <p style="margin-bottom: 1rem;">Garantizamos que la información comercial de nuestros clientes no será comercializada ni cedida a terceros bajo ningún concepto, salvaguardando las disposiciones normativas y regulatorias aplicables en la República de Nicaragua.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">3. Actualización de Información</h4>
+        <p>Cualquier modificación o actualización de datos fiscales o de entrega puede ser gestionada directamente con nuestra administración a través de <em>ventas@carnessanmartin.com.ni</em> o mediante nuestro canal telefónico oficial.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalTerminos" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Términos y Condiciones de Venta Mayorista</h3>
+        <button type="button" class="modal-close" data-close-modal aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.92rem; line-height: 1.65; color: var(--color-text-main);">
+        <p style="margin-bottom: 1rem;">El abastecimiento cárnico brindado por <strong>Distribuidora de Carnes San Martín</strong> se rige bajo los siguientes lineamientos comerciales para el sector mayorista:</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">1. Cotizaciones y Pesaje Oficial</h4>
+        <p style="margin-bottom: 1rem;">Dada la dinámica de mercado del ganado y el matadero industrial, los precios cotizados tienen una vigencia de 24 horas. El peso determinante para la facturación final es el certificado en libras (lb) al momento de pesaje y despacho en nuestras instalaciones o balanzas calibradas de entrega.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">2. Recepción y Verificación de Mercadería</h4>
+        <p style="margin-bottom: 1rem;">El cliente mayorista o su personal autorizado debe cotejar la cantidad de bultos, cortes solicitados y temperatura al momento de la entrega física. La firma del comprobante o factura constituye plena conformidad del estado y calidad del producto.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">3. Política de Devoluciones y Crédito</h4>
+        <p>Por razones estrictas de inocuidad y preservación de la cadena de frío, no se admiten devoluciones de producto cárnico una vez recibido a satisfacción, excepto reportes inmediatos debidamente justificados dentro de las primeras dos horas post-entrega. Los plazos de crédito pactados deben cumplirse puntualmente para mantener la continuidad de los despachos.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalSeguridad" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Seguridad de la Información y Operaciones</h3>
+        <button type="button" class="modal-close" data-close-modal aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.92rem; line-height: 1.65; color: var(--color-text-main);">
+        <p style="margin-bottom: 1rem;"><strong>Distribuidora de Carnes San Martín</strong> aplica políticas rigurosas de seguridad informática y control de acceso operacional:</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">1. Control de Acceso por Roles (RBAC)</h4>
+        <p style="margin-bottom: 1rem;">El acceso a nuestro sistema operativo de inventario, ventas y saldos financieros se encuentra segmentado por niveles de responsabilidad jerárquica estricta (Administrador, Gerente y Vendedor), protegiendo la confidencialidad de precios y márgenes.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">2. Trazabilidad de Movimientos Contables</h4>
+        <p style="margin-bottom: 1rem;">Todas las transacciones de ingreso de matadero, emisión de facturas mayoristas, notas de crédito y abonos bancarios quedan registradas de manera inalterable con marcas de tiempo y auditoría de usuario.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">3. Protección y Respaldo de Base de Datos</h4>
+        <p>Implementamos copias de seguridad continuas y cifrado en el almacenamiento de credenciales, asegurando alta disponibilidad y continuidad ininterrumpida de servicio para nuestros clientes.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalInocuidad" class="modal-backdrop" aria-hidden="true">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Cadena de Frío, Calidad e Inocuidad Cárnica</h3>
+        <button type="button" class="modal-close" data-close-modal aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" style="font-size: 0.92rem; line-height: 1.65; color: var(--color-text-main);">
+        <p style="margin-bottom: 1rem;">La inocuidad de nuestros cortes cárnicos es nuestro principal sello de excelencia. En <strong>Distribuidora de Carnes San Martín</strong> velamos por el cumplimiento de los más altos estándares sanitarios:</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">1. Monitoreo Térmico Continuo</h4>
+        <p style="margin-bottom: 1rem;">Mantenemos rangos de conservación estrictos: entre 0°C y 4°C para cortes frescos refrigerados, y de -18°C para producto congelado, previniendo el desarrollo bacteriano y asegurando la máxima ternura y valor nutritivo de la carne.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">2. Certificación y Trazabilidad IPSA / MINSA</h4>
+        <p style="margin-bottom: 1rem;">Nuestra materia cárnica procede de mataderos industriales inspeccionados y autorizados por el Instituto de Protección y Sanidad Agropecuaria (IPSA) y el Ministerio de Salud (MINSA), con inspección veterinaria completa.</p>
+        <h4 style="font-size: 1rem; color: var(--color-primary); margin: 1.25rem 0 0.5rem 0;">3. Transporte Refrigerado e Higiene Sanitaria</h4>
+        <p>El traslado mayorista se realiza en vehículos termoking debidamente higienizados y aislados. El personal operativo cuenta con indumentaria reglamentaria, guantes y protocolos permanentes de sanitización en contacto con el producto.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-close-modal>Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
   <script src="./js/theme.js"></script>
+  <script src="./js/landing.js"></script>
 </body>
 </html>

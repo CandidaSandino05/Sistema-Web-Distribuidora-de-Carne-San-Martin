@@ -1,0 +1,28 @@
+.clients-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  gap: 1rem;
+}
+
+.clients-search {
+  max-width: 450px;
+  width: 100%;
+}
+
+.client-avatar-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-accent-subtle);
+  color: var(--color-primary);
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  margin-right: 0.5rem;
+  vertical-align: middle;
+}

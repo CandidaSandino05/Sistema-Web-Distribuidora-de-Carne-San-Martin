@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial de Facturas | Carnes San Martín</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <aside class="app-sidebar" id="appSidebar">
+      <div class="sidebar-brand">
+        <div class="brand-cow-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 5c-1.5 0-2.8 1.2-3 2.7-.8-.5-1.8-.7-3-.7s-2.2.2-3 .7C9.8 6.2 8.5 5 7 5c-2.2 0-4 1.8-4 4 0 2 1.3 3.6 3.1 3.9C6.4 14.5 7 16.2 7 18h10c0-1.8.6-3.5.9-5.1 1.8-.3 3.1-1.9 3.1-3.9 0-2.2-1.8-4-4-4z"/>
+            <circle cx="9" cy="11" r="1" fill="currentColor"/>
+            <circle cx="15" cy="11" r="1" fill="currentColor"/>
+            <path d="M10 15h4"/>
+          </svg>
+        </div>
+        <div class="brand-text-wrap">
+          <span class="brand-title">CARNES SAN MARTÍN</span>
+          <span class="brand-sub">Mayorista Premium</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <a href="./dashboard.html" class="nav-item" id="navDashboardLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </a>
+        <a href="./inventario.html" class="nav-item" id="navInventarioLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          Inventario
+        </a>
+        <a href="./matadero.html" class="nav-item" id="navMataderoLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18"></path><path d="M5 21V7l8-4v18"></path><path d="M19 21V11l-6-4"></path></svg>
+          Deuda Matadero
+        </a>
+        <a href="./ventas.html" class="nav-item" id="navVentasLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+          Ventas
+        </a>
+        <a href="./facturas.html" class="nav-item active" id="navFacturasLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+          Facturas
+        </a>
+        <a href="./clientes.html" class="nav-item" id="navClientesLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Clientes
+        </a>
+        <a href="./cuentas.html" class="nav-item" id="navCxcLink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+          Cuentas por Cobrar
+        </a>
+        <a href="./mermas.html" class="nav-item" id="navMermasLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          Mermas
+        </a>
+        <a href="./reportes.html" class="nav-item" id="navReportesLink" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          Reportes
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-profile">
+          <div class="user-avatar" id="userAvatar">U</div>
+          <div class="user-info">
+            <span class="user-name" id="userName">Cargando...</span>
+            <span class="user-role" id="userRole">Usuario</span>
+          </div>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnLogout" style="color: #FFFFFF; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">Cerrar Sesión</button>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="app-header">
+        <div class="header-left">
+          <button type="button" class="btn-hamburger" id="btnToggleSidebar" aria-label="Menú">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div>
+            <h1 class="header-title">Historial de Facturación</h1>
+            <span style="font-size: 0.82rem; color: var(--color-text-muted);" id="facturasSubtitle">Registro de facturas emitidas en Córdobas (C$)</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="theme-toggle-btn" aria-label="Cambiar tema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="app-content">
+        <section class="filter-toolbar">
+          <div class="filter-group-left" style="flex: 1; max-width: 440px;">
+            <input type="text" id="searchFacturaInput" class="form-control" placeholder="Buscar por No. Factura, cliente o vendedor...">
+          </div>
+          <div class="filter-group-left">
+            <button type="button" class="filter-pill-btn active" data-tipo="todas">Todas</button>
+            <button type="button" class="filter-pill-btn" data-tipo="contado">Contado</button>
+            <button type="button" class="filter-pill-btn" data-tipo="credito">Crédito</button>
+          </div>
+        </section>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No. Factura</th>
+                <th>Fecha de Emisión</th>
+                <th>Cliente</th>
+                <th>Emitida por (Vendedor)</th>
+                <th>Condición</th>
+                <th style="text-align: right;">Subtotal (C$)</th>
+                <th style="text-align: right;">Descuento (C$)</th>
+                <th style="text-align: right;">Total (C$)</th>
+                <th>Estado</th>
+                <th style="text-align: right;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="facturasTableBody">
+              <tr>
+                <td colspan="10" style="text-align: center; color: var(--color-text-muted); padding: 2.5rem;">Cargando historial de facturas...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <div id="modalDetalleFactura" class="modal-backdrop">
+    <div class="modal-card modal-card-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="modalFacturaHeaderTitle">Comprobante Oficial de Facturación</h3>
+          <span style="font-size: 0.8rem; color: var(--color-text-muted);">Distribuidora de Carnes San Martín • Mercado Mayoreo, Managua</span>
+        </div>
+        <button type="button" class="modal-close" onclick="closeModal('modalDetalleFactura')">&times;</button>
+      </div>
+      <div class="modal-body" id="modalFacturaContent">
+        Cargando detalle de factura...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="window.print()">Imprimir Comprobante</button>
+        <button type="button" class="btn btn-primary" onclick="closeModal('modalDetalleFactura')">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="../js/theme.js"></script>
+  <script src="../js/facturas.js"></script>
+</body>
+</html>

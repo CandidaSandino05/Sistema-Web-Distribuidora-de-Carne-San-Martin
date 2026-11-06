@@ -10,16 +10,38 @@ if (!token || !userStr) {
 }
 
 const user = JSON.parse(userStr || '{}');
+const userRole = (user.rol || '').toLowerCase();
 
-document.getElementById('userName').textContent = user.nombre || 'Vendedor';
-document.getElementById('userRole').textContent = (user.rol || 'vendedor').toUpperCase();
-document.getElementById('userAvatar').textContent = (user.nombre || 'V').charAt(0).toUpperCase();
+if (userRole !== 'vendedor') {
+  if (userRole === 'administrador') {
+    window.location.href = './dashboard.html';
+  } else {
+    window.location.href = './inventario.html';
+  }
+}
 
-document.getElementById('btnLogout').addEventListener('click', () => {
-  localStorage.removeItem('san_martin_token');
-  localStorage.removeItem('san_martin_user');
-  window.location.href = './login.html';
-});
+const userNameEl = document.getElementById('userName');
+if (userNameEl) userNameEl.textContent = user.nombre || 'Vendedor';
+
+const userRoleEl = document.getElementById('userRole');
+if (userRoleEl) userRoleEl.textContent = (user.rol || 'vendedor').toUpperCase();
+
+const userAvatarEl = document.getElementById('userAvatar');
+if (userAvatarEl) userAvatarEl.textContent = (user.nombre || 'V').charAt(0).toUpperCase();
+
+const btnLogout = document.getElementById('btnLogout');
+if (btnLogout) {
+  btnLogout.addEventListener('click', () => {
+    localStorage.removeItem('san_martin_token');
+    localStorage.removeItem('san_martin_user');
+    window.location.href = './login.html';
+  });
+}
+
+const navClientesLink = document.getElementById('navClientesLink');
+if (navClientesLink) {
+  navClientesLink.style.display = 'none';
+}
 
 const btnToggle = document.getElementById('btnToggleSidebar');
 const sidebar = document.getElementById('appSidebar');
@@ -39,23 +61,37 @@ if (backdrop && sidebar) {
 }
 
 function openModal(id) {
-  document.getElementById(id).classList.add('open');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
 }
 
 function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
 }
 
 window.openModal = openModal;
 window.closeModal = closeModal;
 
 const toastEl = document.getElementById('toast');
+let toastTimeout = null;
 function showToast(message, isError = false) {
+  if (!toastEl) return;
+  if (toastTimeout) clearTimeout(toastTimeout);
   toastEl.textContent = message;
   toastEl.className = 'toast show ' + (isError ? 'toast-error' : 'toast-success');
-  setTimeout(() => {
-    toastEl.className = 'toast';
-  }, 3500);
+  toastTimeout = setTimeout(() => {
+    if (toastEl) toastEl.className = 'toast';
+  }, 4200);
+}
+
+function showPosWarningModal(titulo, mensaje) {
+  const titleEl = document.getElementById('alertaPosTitulo');
+  const msgEl = document.getElementById('alertaPosMensaje');
+  if (titleEl) titleEl.textContent = titulo || 'Advertencia de Validación';
+  if (msgEl) msgEl.textContent = mensaje || '';
+  openModal('modalAlertaPos');
+  showToast(mensaje, true);
 }
 
 const currencyFormatter = new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' });
@@ -73,83 +109,92 @@ const selectClienteId = document.getElementById('selectClienteId');
 const clientDropdownResults = document.getElementById('clientDropdownResults');
 const selectTipoPago = document.getElementById('selectTipoPago');
 const diasCreditoGroup = document.getElementById('diasCreditoGroup');
+const inputDescuentoManual = document.getElementById('inputDescuentoManual');
 const creditAlertBanner = document.getElementById('creditAlertBanner');
 const creditAlertText = document.getElementById('creditAlertText');
 const btnConfirmarVenta = document.getElementById('btnConfirmarVenta');
 const clientStatusCard = document.getElementById('clientStatusCard');
+const posSubtotalEl = document.getElementById('posSubtotal');
+const posDiscountAmountEl = document.getElementById('posDiscountAmount');
+const posGrandTotalEl = document.getElementById('posGrandTotal');
 
-document.getElementById('btnAbrirModalCorte').addEventListener('click', () => {
-  renderModalCatalog(catalog);
-  openModal('modalAgregarCorte');
-  setTimeout(() => {
-    const input = document.getElementById('modalSearchInput');
-    if (input) input.focus();
-  }, 100);
-});
+const btnAbrirModalCorte = document.getElementById('btnAbrirModalCorte');
+if (btnAbrirModalCorte) {
+  btnAbrirModalCorte.addEventListener('click', () => {
+    renderModalCatalog(catalog);
+    openModal('modalAgregarCorte');
+    setTimeout(() => {
+      const input = document.getElementById('modalSearchInput');
+      if (input) input.focus();
+    }, 100);
+  });
+}
 
-searchClienteInput.addEventListener('focus', () => {
-  if (selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
-    filterClientDropdown(searchClienteInput.value);
-  }
-});
+if (inputDescuentoManual) {
+  inputDescuentoManual.addEventListener('input', () => {
+    validateCartState(false);
+  });
+}
 
-searchClienteInput.addEventListener('click', () => {
-  if (selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
-    filterClientDropdown(searchClienteInput.value);
-  }
-});
-
-searchClienteInput.addEventListener('input', () => {
-  if (selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
-    const val = searchClienteInput.value.trim();
-    if (selectedClient && selectedClient.nombre !== val) {
-      selectedClient = null;
-      selectClienteId.value = '';
-      clientStatusCard.style.display = 'none';
-      validateCartState();
+if (searchClienteInput) {
+  searchClienteInput.addEventListener('focus', () => {
+    if (selectTipoPago && selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
+      filterClientDropdown(searchClienteInput.value);
     }
-    filterClientDropdown(searchClienteInput.value);
-  }
-});
+  });
 
-searchClienteInput.addEventListener('blur', () => {
-  setTimeout(() => {
-    if (selectTipoPago.value === 'contado') {
-      searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
-      selectClienteId.value = 'cf';
-    } else {
-      if (!selectedClient) {
-        searchClienteInput.value = '';
-        selectClienteId.value = '';
-        validateCartState();
-      } else {
-        searchClienteInput.value = selectedClient.nombre;
+  searchClienteInput.addEventListener('click', () => {
+    if (selectTipoPago && selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
+      filterClientDropdown(searchClienteInput.value);
+    }
+  });
+
+  searchClienteInput.addEventListener('input', () => {
+    if (selectTipoPago && selectTipoPago.value === 'credito' && !searchClienteInput.disabled) {
+      const val = searchClienteInput.value.trim();
+      if (selectedClient && selectedClient.nombre !== val) {
+        selectedClient = null;
+        if (selectClienteId) selectClienteId.value = '';
+        if (clientStatusCard) clientStatusCard.style.display = 'none';
+        validateCartState(false);
       }
+      filterClientDropdown(searchClienteInput.value);
     }
-  }, 250);
-});
+  });
+
+  searchClienteInput.addEventListener('blur', () => {
+    setTimeout(() => {
+      if (selectTipoPago && selectTipoPago.value === 'contado') {
+        searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
+        if (selectClienteId) selectClienteId.value = 'cf';
+      } else {
+        if (!selectedClient) {
+          searchClienteInput.value = '';
+          if (selectClienteId) selectClienteId.value = '';
+          validateCartState(false);
+        } else {
+          searchClienteInput.value = selectedClient.nombre;
+        }
+      }
+    }, 250);
+  });
+}
 
 document.addEventListener('click', (e) => {
-  if (!e.target.closest('.pos-search-select-wrap')) {
+  if (!e.target.closest('.pos-search-select-wrap') && clientDropdownResults) {
     clientDropdownResults.style.display = 'none';
   }
 });
 
 function filterClientDropdown(query) {
+  if (!clientDropdownResults || !selectTipoPago || !searchClienteInput) return;
   if (selectTipoPago.value === 'contado' || searchClienteInput.disabled) {
     clientDropdownResults.style.display = 'none';
     return;
   }
 
-  let q = (query || '').toLowerCase().trim();
-
-  const list = [];
-  clients.forEach(c => {
-    if (!c.nombre.toLowerCase().includes('consumidor final')) {
-      list.push(c);
-    }
-  });
-
+  const q = (query || '').toLowerCase().trim();
+  const list = clients.filter(c => !c.nombre.toLowerCase().includes('consumidor final'));
   const filtered = q
     ? list.filter(c => c.nombre.toLowerCase().includes(q))
     : list;
@@ -174,116 +219,143 @@ function filterClientDropdown(query) {
 }
 
 window.selectClient = function(clientId) {
-  clientDropdownResults.style.display = 'none';
+  if (clientDropdownResults) clientDropdownResults.style.display = 'none';
 
   if (clientId === 'cf' || !clientId) {
-    if (selectTipoPago.value === 'credito') {
-      searchClienteInput.value = '';
-      selectClienteId.value = '';
+    if (selectTipoPago && selectTipoPago.value === 'credito') {
+      if (searchClienteInput) searchClienteInput.value = '';
+      if (selectClienteId) selectClienteId.value = '';
       selectedClient = null;
-      clientStatusCard.style.display = 'none';
-      validateCartState();
+      if (clientStatusCard) clientStatusCard.style.display = 'none';
+      validateCartState(false);
       return;
     }
-    selectClienteId.value = 'cf';
-    searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
+    if (selectClienteId) selectClienteId.value = 'cf';
+    if (searchClienteInput) searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
     selectedClient = null;
-    clientStatusCard.style.display = 'none';
+    if (clientStatusCard) clientStatusCard.style.display = 'none';
   } else {
     selectedClient = clients.find(c => String(c.id) === String(clientId)) || null;
     if (selectedClient) {
-      selectClienteId.value = selectedClient.id;
-      searchClienteInput.value = selectedClient.nombre;
-      clientStatusCard.style.display = 'block';
+      if (selectClienteId) selectClienteId.value = selectedClient.id;
+      if (searchClienteInput) searchClienteInput.value = selectedClient.nombre;
+      if (clientStatusCard) clientStatusCard.style.display = 'block';
 
       const limite = parseFloat(selectedClient.limite_credito || 0);
       const deuda = parseFloat(selectedClient.saldo_pendiente || 0);
       const disponible = Math.max(0, limite - deuda);
 
-      document.getElementById('cliInfoLimite').textContent = formatMoney(limite);
-      document.getElementById('cliInfoDeuda').textContent = formatMoney(deuda);
-      document.getElementById('cliInfoDisponible').textContent = formatMoney(disponible);
+      const limEl = document.getElementById('cliInfoLimite');
+      const deuEl = document.getElementById('cliInfoDeuda');
+      const disEl = document.getElementById('cliInfoDisponible');
+
+      if (limEl) limEl.textContent = formatMoney(limite);
+      if (deuEl) deuEl.textContent = formatMoney(deuda);
+      if (disEl) disEl.textContent = formatMoney(disponible);
     }
   }
 
-  validateCartState();
+  validateCartState(true);
 };
 
-selectTipoPago.addEventListener('change', () => {
-  const tipo = selectTipoPago.value;
-  clientDropdownResults.style.display = 'none';
+if (selectTipoPago) {
+  selectTipoPago.addEventListener('change', () => {
+    const tipo = selectTipoPago.value;
+    if (clientDropdownResults) clientDropdownResults.style.display = 'none';
 
-  if (tipo === 'contado') {
-    searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
-    searchClienteInput.disabled = true;
-    selectClienteId.value = 'cf';
-    selectedClient = null;
-    clientStatusCard.style.display = 'none';
-    diasCreditoGroup.style.display = 'none';
-  } else {
-    searchClienteInput.value = '';
-    searchClienteInput.disabled = false;
-    selectClienteId.value = '';
-    selectedClient = null;
-    clientStatusCard.style.display = 'none';
-    diasCreditoGroup.style.display = 'block';
-    setTimeout(() => {
-      searchClienteInput.focus();
-    }, 50);
-  }
-
-  validateCartState();
-});
-
-function calculateTotal() {
-  return cart.reduce((acc, item) => {
-    const qty = parseFloat(item.cantidad);
-    if (!isNaN(qty) && qty > 0 && item.subtotal > 0) {
-      return acc + item.subtotal;
+    if (tipo === 'contado') {
+      if (searchClienteInput) {
+        searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
+        searchClienteInput.disabled = true;
+      }
+      if (selectClienteId) selectClienteId.value = 'cf';
+      selectedClient = null;
+      if (clientStatusCard) clientStatusCard.style.display = 'none';
+      if (diasCreditoGroup) diasCreditoGroup.style.display = 'none';
+    } else {
+      if (searchClienteInput) {
+        searchClienteInput.value = '';
+        searchClienteInput.disabled = false;
+      }
+      if (selectClienteId) selectClienteId.value = '';
+      selectedClient = null;
+      if (clientStatusCard) clientStatusCard.style.display = 'none';
+      if (diasCreditoGroup) diasCreditoGroup.style.display = 'block';
+      setTimeout(() => {
+        if (searchClienteInput) searchClienteInput.focus();
+      }, 50);
     }
-    return acc;
-  }, 0);
+
+    validateCartState(false);
+  });
 }
 
-function validateCartState() {
-  const total = calculateTotal();
-  const grandTotalEl = document.getElementById('posGrandTotal');
-  if (grandTotalEl) {
-    grandTotalEl.textContent = formatMoney(total);
-  }
+function getTotalsBreakdown() {
+  let subtotal = 0;
 
-  const tipoPago = selectTipoPago.value;
+  cart.forEach(item => {
+    const qty = parseFloat(item.cantidad);
+    if (isNaN(qty) || qty <= 0) {
+      item.subtotal = 0;
+      return;
+    }
+    item.subtotal = parseFloat((qty * item.precio_unitario).toFixed(2));
+    subtotal = parseFloat((subtotal + item.subtotal).toFixed(2));
+  });
+
+  let descuento = inputDescuentoManual ? parseFloat(inputDescuentoManual.value || 0) : 0;
+  if (isNaN(descuento) || descuento < 0) descuento = 0;
+
+  const total = parseFloat(Math.max(0, subtotal - descuento).toFixed(2));
+
+  if (posSubtotalEl) posSubtotalEl.textContent = formatMoney(subtotal);
+  if (posDiscountAmountEl) posDiscountAmountEl.textContent = '-' + formatMoney(descuento);
+  if (posGrandTotalEl) posGrandTotalEl.textContent = formatMoney(total);
+
+  return { subtotal, descuento, total };
+}
+
+function validateCartState(triggerCreditModal = false) {
+  const { subtotal, descuento, total } = getTotalsBreakdown();
+  const tipoPago = selectTipoPago ? selectTipoPago.value : 'contado';
 
   if (cart.length === 0) {
-    creditAlertBanner.style.display = 'none';
-    btnConfirmarVenta.disabled = true;
-    return;
+    if (creditAlertBanner) creditAlertBanner.style.display = 'none';
+    if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+    return false;
   }
 
-  let hasError = false;
+  if (descuento > subtotal) {
+    if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+    return false;
+  }
 
+  const productQtyMap = {};
   for (const item of cart) {
     const qty = parseFloat(item.cantidad);
-    const prod = catalog.find(p => p.id === item.producto_id);
-    const maxStock = parseFloat(prod ? prod.stock_actual : item.stock_max);
-
-    if (isNaN(qty) || qty <= 0 || qty > maxStock) {
-      hasError = true;
-      break;
+    if (isNaN(qty) || qty <= 0) {
+      if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+      return false;
     }
+    productQtyMap[item.producto_id] = (productQtyMap[item.producto_id] || 0) + qty;
   }
 
-  if (hasError) {
-    btnConfirmarVenta.disabled = true;
-    return;
+  for (const prodIdStr of Object.keys(productQtyMap)) {
+    const prodId = parseInt(prodIdStr, 10);
+    const prod = catalog.find(p => p.id === prodId);
+    const maxStock = parseFloat(prod ? prod.stock_actual : 0);
+    if (productQtyMap[prodId] > maxStock) {
+      if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+      return false;
+    }
   }
 
   if (tipoPago === 'credito') {
-    if (!selectedClient || !selectClienteId.value || selectClienteId.value === 'cf') {
-      creditAlertText.textContent = 'Debe seleccionar un cliente registrado para ventas a crédito';
-      creditAlertBanner.style.display = 'flex';
-      btnConfirmarVenta.disabled = true;
-      return;
+    if (!selectedClient || !selectClienteId || !selectClienteId.value || selectClienteId.value === 'cf') {
+      if (creditAlertText) creditAlertText.textContent = 'Debe seleccionar un cliente registrado para ventas a crédito';
+      if (creditAlertBanner) creditAlertBanner.style.display = 'flex';
+      if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+      return false;
     }
 
     const limite = parseFloat(selectedClient.limite_credito || 0);
@@ -291,15 +363,22 @@ function validateCartState() {
     const disponible = Math.max(0, limite - deuda);
 
     if (total > disponible) {
-      creditAlertText.innerHTML = `Límite de crédito excedido. Disponible: <strong>${formatMoney(disponible)}</strong> | Total orden: <strong>${formatMoney(total)}</strong>`;
-      creditAlertBanner.style.display = 'flex';
-      btnConfirmarVenta.disabled = true;
-      return;
+      const msg = `El total a pagar (${formatMoney(total)}) supera el límite de crédito disponible de ${selectedClient.nombre} (${formatMoney(disponible)}).`;
+      if (creditAlertText) {
+        creditAlertText.innerHTML = `Límite de crédito excedido. Disponible: <strong>${formatMoney(disponible)}</strong> | Total orden: <strong>${formatMoney(total)}</strong>`;
+      }
+      if (creditAlertBanner) creditAlertBanner.style.display = 'flex';
+      if (btnConfirmarVenta) btnConfirmarVenta.disabled = true;
+      if (triggerCreditModal) {
+        showPosWarningModal('Límite de Crédito Excedido', msg);
+      }
+      return false;
     }
   }
 
-  creditAlertBanner.style.display = 'none';
-  btnConfirmarVenta.disabled = false;
+  if (creditAlertBanner) creditAlertBanner.style.display = 'none';
+  if (btnConfirmarVenta) btnConfirmarVenta.disabled = false;
+  return true;
 }
 
 async function loadInitialData() {
@@ -325,7 +404,7 @@ async function loadInitialData() {
       catalog = [];
     }
 
-    let cxcBalances = {};
+    const cxcBalances = {};
     if (resCxc && resCxc.ok) {
       try {
         const cxcData = await resCxc.json();
@@ -353,43 +432,51 @@ async function loadInitialData() {
   } catch (err) {
     catalog = [];
     clients = [];
-    showToast(err.message, true);
+    showToast(err.message || 'Error al cargar catálogo inicial', true);
   }
 
-  selectTipoPago.value = 'contado';
-  searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
-  searchClienteInput.disabled = true;
-  selectClienteId.value = 'cf';
+  if (selectTipoPago) selectTipoPago.value = 'contado';
+  if (searchClienteInput) {
+    searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
+    searchClienteInput.disabled = true;
+  }
+  if (selectClienteId) selectClienteId.value = 'cf';
   selectedClient = null;
-  clientStatusCard.style.display = 'none';
-  diasCreditoGroup.style.display = 'none';
+  if (clientStatusCard) clientStatusCard.style.display = 'none';
+  if (diasCreditoGroup) diasCreditoGroup.style.display = 'none';
 
   renderModalCatalog(catalog);
 }
 
 function renderModalCatalog(list) {
   const container = document.getElementById('modalCatalogTableBody');
+  if (!container) return;
+
   if (!list || list.length === 0) {
     container.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 2rem;">No se encontraron cortes coincidentes.</td></tr>';
     return;
   }
 
   container.innerHTML = list.map(item => {
-    const stock = parseFloat(item.stock_actual);
-    const isOutOfStock = stock <= 0;
+    const inCart = cart
+      .filter(c => c.producto_id === item.id)
+      .reduce((sum, c) => sum + (parseFloat(c.cantidad) || 0), 0);
+    const availableStock = Math.max(0, parseFloat(item.stock_actual) - inCart);
+    const isOutOfStock = availableStock <= 0;
+    const isCritical = availableStock > 0 && availableStock <= 5.0;
     return `
       <tr>
         <td><strong>#${String(item.id).padStart(4, '0')}</strong></td>
         <td><strong style="color: var(--color-text-main);">${item.nombre}</strong></td>
         <td style="font-weight: 700; color: var(--color-primary);">${formatMoney(item.precio_venta)}</td>
         <td>
-          <span style="font-weight: 600; ${isOutOfStock ? 'color: var(--color-danger);' : 'color: var(--color-text-main);'}">
-            ${stock.toFixed(2)} lb
+          <span class="badge ${isOutOfStock || isCritical ? 'badge-danger' : 'badge-success'}">
+            ${availableStock.toFixed(2)} lb ${isCritical ? '(STOCK CRÍTICO)' : (isOutOfStock ? '(AGOTADO)' : '')}
           </span>
         </td>
         <td style="text-align: right;">
           <button type="button" class="btn btn-primary btn-sm" onclick="addToCartFromModal(${item.id})" ${isOutOfStock ? 'disabled' : ''}>
-            + Agregar
+            + Agregar Fila
           </button>
         </td>
       </tr>
@@ -397,52 +484,50 @@ function renderModalCatalog(list) {
   }).join('');
 }
 
-document.getElementById('modalSearchInput').addEventListener('input', (e) => {
-  const query = e.target.value.toLowerCase().trim();
-  const filtered = catalog.filter(item =>
-    item.nombre.toLowerCase().includes(query) || String(item.id).includes(query)
-  );
-  renderModalCatalog(filtered);
-});
+const modalSearchInput = document.getElementById('modalSearchInput');
+if (modalSearchInput) {
+  modalSearchInput.addEventListener('input', (e) => {
+    const query = e.target.value.toLowerCase().trim();
+    const filtered = catalog.filter(item =>
+      item.nombre.toLowerCase().includes(query) || String(item.id).includes(query)
+    );
+    renderModalCatalog(filtered);
+  });
+}
 
 window.addToCartFromModal = function(productId) {
   const product = catalog.find(p => p.id === productId);
   if (!product) return;
 
   const currentStock = parseFloat(product.stock_actual);
-  if (currentStock <= 0) {
-    showToast(`Stock insuficiente para ${product.nombre}. Disponible: 0 lb`, true);
+  const currentProductQtyInCart = cart
+    .filter(i => i.producto_id === product.id)
+    .reduce((acc, i) => acc + (parseFloat(i.cantidad) || 0), 0);
+
+  if (currentStock <= 0 || currentProductQtyInCart + 1 > currentStock) {
+    closeModal('modalAgregarCorte');
+    showPosWarningModal(
+      'Stock Insuficiente en Inventario',
+      `No se puede agregar más "${product.nombre}". Stock total disponible: ${currentStock.toFixed(2)} lb (En carrito: ${currentProductQtyInCart.toFixed(2)} lb).`
+    );
     return;
   }
 
-  const existingItem = cart.find(i => i.producto_id === product.id);
-  const currentCartQty = existingItem ? parseFloat(existingItem.cantidad || 0) : 0;
-  const newQty = currentCartQty + 1;
-
-  if (newQty > currentStock) {
-    showToast(`Stock insuficiente para ${product.nombre}. Disponible: ${currentStock} lb`, true);
-    return;
-  }
-
-  if (existingItem) {
-    existingItem.cantidad = newQty;
-    existingItem.subtotal = existingItem.cantidad * existingItem.precio_unitario;
-  } else {
-    const rowId = Date.now() + Math.random();
-    cart.push({
-      rowId: rowId,
-      producto_id: product.id,
-      nombre: product.nombre,
-      precio_unitario: parseFloat(product.precio_venta),
-      cantidad: 1,
-      stock_max: currentStock,
-      subtotal: parseFloat(product.precio_venta)
-    });
-  }
+  const rowId = Date.now() + Math.floor(Math.random() * 100000);
+  cart.push({
+    rowId: rowId,
+    producto_id: product.id,
+    nombre: product.nombre,
+    precio_unitario: parseFloat(product.precio_venta),
+    cantidad: 1,
+    stock_max: currentStock,
+    subtotal: parseFloat(product.precio_venta)
+  });
 
   closeModal('modalAgregarCorte');
   renderCart();
-  showToast(`"${product.nombre}" agregado`);
+  renderModalCatalog(catalog);
+  showToast(`Fila de "${product.nombre}" agregada al carrito`);
 };
 
 window.onQtyInputChanged = function(rowId, val, inputEl) {
@@ -450,8 +535,16 @@ window.onQtyInputChanged = function(rowId, val, inputEl) {
   if (!item) return;
 
   const input = inputEl || document.getElementById(`qtyInput_${rowId}`);
+  const hint = document.getElementById(`stockMsg_${rowId}`);
   const parsed = parseFloat(val);
   const subtotalEl = document.getElementById(`subtotalRow_${rowId}`);
+
+  const prod = catalog.find(p => p.id === item.producto_id);
+  const totalStock = parseFloat(prod ? prod.stock_actual : item.stock_max);
+  const otherRowsQty = cart
+    .filter(i => i.producto_id === item.producto_id && i.rowId !== rowId)
+    .reduce((acc, i) => acc + (parseFloat(i.cantidad) || 0), 0);
+  const maxAvailableForRow = Math.max(0, totalStock - otherRowsQty);
 
   if (isNaN(parsed) || parsed <= 0) {
     item.cantidad = isNaN(parsed) ? 0 : parsed;
@@ -459,63 +552,83 @@ window.onQtyInputChanged = function(rowId, val, inputEl) {
     if (input) {
       input.style.borderColor = '#D32F2F';
       input.style.outline = '1px solid #D32F2F';
+      input.style.backgroundColor = 'rgba(211, 47, 47, 0.08)';
+    }
+    if (hint) {
+      hint.textContent = 'Ingrese una cantidad válida mayor a 0 lb';
+      hint.style.display = 'block';
     }
     if (subtotalEl) {
       subtotalEl.textContent = formatMoney(0);
     }
-    validateCartState();
-    btnConfirmarVenta.disabled = true;
+    validateCartState(false);
     return;
   }
 
-  const prod = catalog.find(p => p.id === item.producto_id);
-  const currentStock = parseFloat(prod ? prod.stock_actual : item.stock_max);
-
-  if (parsed > currentStock) {
+  if (parsed > maxAvailableForRow) {
     item.cantidad = parsed;
     item.subtotal = 0;
     if (input) {
       input.style.borderColor = '#D32F2F';
       input.style.outline = '1px solid #D32F2F';
+      input.style.backgroundColor = 'rgba(211, 47, 47, 0.08)';
+    }
+    if (hint) {
+      hint.textContent = `Stock insuficiente (Disponible: ${maxAvailableForRow.toFixed(2)} lb)`;
+      hint.style.display = 'block';
     }
     if (subtotalEl) {
       subtotalEl.textContent = formatMoney(0);
     }
-    showToast(`Stock insuficiente para ${item.nombre}. Disponible: ${currentStock} lb`, true);
-    validateCartState();
-    btnConfirmarVenta.disabled = true;
+    showPosWarningModal(
+      'Stock Insuficiente',
+      `La cantidad solicitada de "${item.nombre}" (${(parsed + otherRowsQty).toFixed(2)} lb en total) supera el stock disponible (${totalStock.toFixed(2)} lb).`
+    );
+    validateCartState(false);
     return;
   }
 
   if (input) {
     input.style.borderColor = '';
     input.style.outline = '';
+    input.style.backgroundColor = '';
+  }
+  if (hint) {
+    hint.textContent = '';
+    hint.style.display = 'none';
   }
   item.cantidad = parsed;
-  item.subtotal = item.cantidad * item.precio_unitario;
+  item.subtotal = parseFloat((parsed * item.precio_unitario).toFixed(2));
 
   if (subtotalEl) {
     subtotalEl.textContent = formatMoney(item.subtotal);
   }
 
-  validateCartState();
+  renderModalCatalog(catalog);
+  validateCartState(true);
 };
 
 window.removeFromCartByRow = function(rowId) {
   cart = cart.filter(i => i.rowId !== rowId);
   renderCart();
+  renderModalCatalog(catalog);
 };
 
-document.getElementById('btnClearCart').addEventListener('click', () => {
-  if (cart.length > 0) {
-    cart = [];
-    renderCart();
-  }
-});
+const btnClearCart = document.getElementById('btnClearCart');
+if (btnClearCart) {
+  btnClearCart.addEventListener('click', () => {
+    if (cart.length > 0) {
+      cart = [];
+      if (inputDescuentoManual) inputDescuentoManual.value = '0.00';
+      renderCart();
+      renderModalCatalog(catalog);
+    }
+  });
+}
 
 function renderCart() {
   const container = document.getElementById('cartTableBody');
-  const grandTotalEl = document.getElementById('posGrandTotal');
+  if (!container) return;
 
   if (cart.length === 0) {
     container.innerHTML = `
@@ -526,153 +639,189 @@ function renderCart() {
         </td>
       </tr>
     `;
-    grandTotalEl.textContent = 'C$0.00';
-    validateCartState();
+    validateCartState(false);
     return;
   }
 
-  let totalAmount = 0;
-
   container.innerHTML = cart.map((item, index) => {
-    const isInvalid = isNaN(item.cantidad) || item.cantidad <= 0 || item.cantidad > item.stock_max;
-    if (!isInvalid && item.subtotal > 0) {
-      totalAmount += item.subtotal;
-    }
-    const borderStyle = isInvalid ? 'border-color: #D32F2F; outline: 1px solid #D32F2F;' : '';
+    const prod = catalog.find(p => p.id === item.producto_id);
+    const totalStock = parseFloat(prod ? prod.stock_actual : item.stock_max);
+    const otherRowsQty = cart
+      .filter(i => i.producto_id === item.producto_id && i.rowId !== item.rowId)
+      .reduce((acc, i) => acc + (parseFloat(i.cantidad) || 0), 0);
+    const maxAvailableForRow = Math.max(0, totalStock - otherRowsQty);
+
+    const isExceeded = parseFloat(item.cantidad) > maxAvailableForRow;
+    const isInvalid = isNaN(item.cantidad) || item.cantidad <= 0 || isExceeded;
+    const borderStyle = isInvalid ? 'border-color: #D32F2F; outline: 1px solid #D32F2F; background-color: rgba(211, 47, 47, 0.08);' : '';
+    const errorMsg = isExceeded
+      ? `Stock insuficiente (Disponible: ${maxAvailableForRow.toFixed(2)} lb)`
+      : (isNaN(item.cantidad) || item.cantidad <= 0 ? 'Cantidad inválida' : '');
+    const errorDisplay = isInvalid ? 'block' : 'none';
 
     return `
       <tr>
         <td>
           <div style="font-weight: 600; color: var(--color-text-main);">${item.nombre}</div>
-          <span style="font-size: 0.72rem; color: var(--color-text-muted);">Pesaje #${index + 1}</span>
+          <span style="font-size: 0.72rem; color: var(--color-text-muted);">Pesaje Independiente #${index + 1}</span>
         </td>
         <td>
           <span style="font-weight: 700; color: var(--color-primary);">${formatMoney(item.precio_unitario)}</span>
           <span style="font-size: 0.72rem; color: var(--color-text-muted);">/ lb</span>
         </td>
         <td>
-          <input type="number" id="qtyInput_${item.rowId}" class="qty-input-pos" value="${item.cantidad}" min="0.1" step="0.01" style="${borderStyle}" oninput="onQtyInputChanged(${item.rowId}, this.value, this)">
+          <input type="number" id="qtyInput_${item.rowId}" class="qty-input-pos" value="${item.cantidad}" min="0.01" step="0.01" style="${borderStyle}" oninput="onQtyInputChanged(${item.rowId}, this.value, this)">
+          <div id="stockMsg_${item.rowId}" style="display: ${errorDisplay}; color: #D32F2F; font-size: 0.72rem; font-weight: 700; margin-top: 0.25rem;">
+            ${errorMsg}
+          </div>
         </td>
         <td>
           <strong id="subtotalRow_${item.rowId}" style="color: var(--color-text-main); font-size: 0.95rem;">${formatMoney(item.subtotal)}</strong>
         </td>
         <td style="text-align: right;">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="removeFromCartByRow(${item.rowId})" style="color: var(--color-danger); padding: 0.25rem 0.5rem;" title="Eliminar">&times;</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="removeFromCartByRow(${item.rowId})" style="color: var(--color-danger); padding: 0.25rem 0.5rem;" title="Eliminar fila">&times;</button>
         </td>
       </tr>
     `;
   }).join('');
 
-  grandTotalEl.textContent = formatMoney(totalAmount);
-  validateCartState();
+  validateCartState(true);
 }
 
-document.getElementById('posCheckoutForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+const posCheckoutForm = document.getElementById('posCheckoutForm');
+if (posCheckoutForm) {
+  posCheckoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  if (cart.length === 0) {
-    showToast('La orden está vacía', true);
-    return;
-  }
-
-  for (const item of cart) {
-    const qty = parseFloat(item.cantidad);
-    if (isNaN(qty) || qty <= 0) {
-      showToast(`Cantidad inválida para ${item.nombre}. Debe ser mayor a 0`, true);
-      btnConfirmarVenta.disabled = true;
-      return;
-    }
-    const prod = catalog.find(p => p.id === item.producto_id);
-    const availableStock = parseFloat(prod ? prod.stock_actual : item.stock_max);
-    if (qty > availableStock) {
-      showToast(`Stock insuficiente para ${item.nombre}. Disponible: ${availableStock} lb`, true);
-      btnConfirmarVenta.disabled = true;
-      return;
-    }
-  }
-
-  const tipo_pago = selectTipoPago.value;
-  const cliVal = selectClienteId.value;
-
-  if (tipo_pago === 'credito') {
-    if (!selectedClient || !cliVal || cliVal === 'cf') {
-      showToast('Debe seleccionar un cliente registrado para ventas a crédito', true);
-      creditAlertText.textContent = 'Debe seleccionar un cliente registrado para ventas a crédito';
-      creditAlertBanner.style.display = 'flex';
-      btnConfirmarVenta.disabled = true;
+    if (cart.length === 0) {
+      showPosWarningModal('Orden Vacía', 'Agregue al menos un corte cárnico antes de confirmar la venta.');
       return;
     }
 
-    const limite = parseFloat(selectedClient.limite_credito || 0);
-    const deuda = parseFloat(selectedClient.saldo_pendiente || 0);
-    const disponible = Math.max(0, limite - deuda);
-    const total = calculateTotal();
+    const { subtotal, descuento, total } = getTotalsBreakdown();
 
-    if (total > disponible) {
-      showToast('Límite de crédito superado. Venta rechazada.', true);
-      creditAlertText.innerHTML = `Límite de crédito excedido. Disponible: <strong>${formatMoney(disponible)}</strong> | Total orden: <strong>${formatMoney(total)}</strong>`;
-      creditAlertBanner.style.display = 'flex';
-      btnConfirmarVenta.disabled = true;
+    if (descuento > subtotal) {
+      showPosWarningModal('Descuento Inválido', 'El descuento en Córdobas no puede ser mayor al subtotal de la orden.');
       return;
     }
-  }
 
-  const cliente_id = cliVal === 'cf' ? 'cf' : parseInt(cliVal, 10);
-  const dias_credito = tipo_pago === 'credito'
-    ? parseInt(document.getElementById('inputDiasCredito').value || 15, 10)
-    : 0;
-
-  btnConfirmarVenta.disabled = true;
-  btnConfirmarVenta.textContent = 'Procesando Venta...';
-
-  const payload = {
-    cliente_id,
-    tipo_pago,
-    dias_credito,
-    items: cart.map(i => ({
-      producto_id: i.producto_id,
-      cantidad: parseFloat(i.cantidad),
-      precio_unitario: i.precio_unitario,
-      descuento: 0
-    }))
-  };
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/ventas`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await res.json();
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || 'Error al emitir factura');
+    const productQtyMap = {};
+    for (const item of cart) {
+      const qty = parseFloat(item.cantidad);
+      if (isNaN(qty) || qty <= 0) {
+        showPosWarningModal('Cantidad Inválida', `Ingrese un peso en libras mayor a 0 para "${item.nombre}".`);
+        return;
+      }
+      productQtyMap[item.producto_id] = (productQtyMap[item.producto_id] || 0) + qty;
     }
 
-    const numFactura = data.data?.numero_factura || data.data?.venta?.numero_factura || ('FAC-' + String(data.data?.venta?.id || '').padStart(6, '0'));
-    showToast(`¡Venta registrada con éxito! Factura: ${numFactura}`, false);
-    cart = [];
-    renderCart();
+    for (const prodIdStr of Object.keys(productQtyMap)) {
+      const prodId = parseInt(prodIdStr, 10);
+      const prod = catalog.find(p => p.id === prodId);
+      const availableStock = parseFloat(prod ? prod.stock_actual : 0);
+      if (productQtyMap[prodId] > availableStock) {
+        showPosWarningModal(
+          'Stock Insuficiente',
+          `El corte "${prod ? prod.nombre : ''}" tiene ${availableStock.toFixed(2)} lb disponibles, pero la orden solicita ${productQtyMap[prodId].toFixed(2)} lb.`
+        );
+        return;
+      }
+    }
 
-    selectTipoPago.value = 'contado';
-    searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
-    searchClienteInput.disabled = true;
-    selectClienteId.value = 'cf';
-    selectedClient = null;
-    clientStatusCard.style.display = 'none';
-    diasCreditoGroup.style.display = 'none';
+    const tipo_pago = selectTipoPago ? selectTipoPago.value : 'contado';
+    const cliVal = selectClienteId ? selectClienteId.value : 'cf';
 
-    await loadInitialData();
-  } catch (err) {
-    showToast(err.message || 'Error al emitir factura', true);
-  } finally {
-    btnConfirmarVenta.disabled = false;
-    btnConfirmarVenta.textContent = 'Confirmar y Registrar Venta';
-  }
-});
+    if (tipo_pago === 'credito') {
+      if (!selectedClient || !cliVal || cliVal === 'cf') {
+        showPosWarningModal('Cliente Requerido', 'Debe seleccionar un cliente mayorista registrado para emitir una venta al crédito.');
+        return;
+      }
+
+      const limite = parseFloat(selectedClient.limite_credito || 0);
+      const deuda = parseFloat(selectedClient.saldo_pendiente || 0);
+      const disponible = Math.max(0, limite - deuda);
+
+      if (total > disponible) {
+        showPosWarningModal(
+          'Límite de Crédito Excedido',
+          `El total a pagar (${formatMoney(total)}) excede el crédito disponible de ${selectedClient.nombre} (${formatMoney(disponible)}).`
+        );
+        return;
+      }
+    }
+
+    const cliente_id = (tipo_pago === 'contado' || cliVal === 'cf') ? 'cf' : parseInt(cliVal, 10);
+    const inputDias = document.getElementById('inputDiasCredito');
+    const dias_credito = tipo_pago === 'credito'
+      ? parseInt((inputDias && inputDias.value) ? inputDias.value : 15, 10)
+      : 0;
+
+    if (btnConfirmarVenta) {
+      btnConfirmarVenta.disabled = true;
+      btnConfirmarVenta.textContent = 'Procesando Venta...';
+    }
+
+    const payload = {
+      cliente_id,
+      tipo_pago,
+      dias_credito,
+      descuento,
+      items: cart.map(i => ({
+        producto_id: i.producto_id,
+        cantidad: parseFloat(i.cantidad),
+        precio_unitario: i.precio_unitario
+      }))
+    };
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/ventas`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Error al emitir factura');
+      }
+
+      const numFactura = data.data?.numero_factura || data.data?.venta?.numero_factura || ('FAC-' + String(data.data?.venta?.id || '').padStart(6, '0'));
+      const alertas = data.data?.alertas_stock || [];
+      if (alertas.length > 0) {
+        const nombres = alertas.map(a => `${a.nombre} (${a.stock_actual.toFixed(1)} lb)`).join(', ');
+        showToast(`Factura ${numFactura} emitida. ¡STOCK CRÍTICO en: ${nombres}!`, false);
+      } else {
+        showToast(`¡Venta registrada con éxito! Factura: ${numFactura}`, false);
+      }
+
+      cart = [];
+      if (inputDescuentoManual) inputDescuentoManual.value = '0.00';
+      renderCart();
+
+      if (selectTipoPago) selectTipoPago.value = 'contado';
+      if (searchClienteInput) {
+        searchClienteInput.value = 'Consumidor Final (Venta al Contado)';
+        searchClienteInput.disabled = true;
+      }
+      if (selectClienteId) selectClienteId.value = 'cf';
+      selectedClient = null;
+      if (clientStatusCard) clientStatusCard.style.display = 'none';
+      if (diasCreditoGroup) diasCreditoGroup.style.display = 'none';
+
+      await loadInitialData();
+    } catch (err) {
+      showPosWarningModal('Error al Registrar Venta', err.message || 'No se pudo completar la facturación.');
+    } finally {
+      if (btnConfirmarVenta) {
+        btnConfirmarVenta.disabled = cart.length === 0;
+        btnConfirmarVenta.textContent = 'Confirmar y Registrar Venta';
+      }
+    }
+  });
+}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadInitialData);
