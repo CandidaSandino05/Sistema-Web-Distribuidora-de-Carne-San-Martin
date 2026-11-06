@@ -1,6 +1,4 @@
-const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname)
-  ? 'http://localhost:3000/api'
-  : '/api';
+const API_URL = 'https://sistema-web-distribuidora-de-carne-san.onrender.com/api';
 
 const token = localStorage.getItem('san_martin_token');
 const userStr = localStorage.getItem('san_martin_user');
