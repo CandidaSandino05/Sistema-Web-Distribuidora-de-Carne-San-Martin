@@ -20,7 +20,7 @@ const { NotFoundError } = require('./utils/errors');
 const app = express();
 
 const corsOptions = {
-  origin: '*',
+  origin: '*', 
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   allowedHeaders: ['Content-Type', 'Authorization', 'cache-control', 'pragma', 'expires', 'Cache-Control', 'Pragma', 'Expires']
 };
@@ -109,10 +109,12 @@ async function ensureDatabaseSchema() {
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, async () => {
+// AQUI ESTA EL CAMBIO CRUCIAL PARA RENDER:
+app.listen(PORT, '0.0.0.0', async () => {
   console.log(`Servidor corriendo en el puerto ${PORT}`);
   try {
     await db.query('SELECT 1');
+    console.log('¡Conexión exitosa a Supabase!');
     await ensureDatabaseSchema();
     console.log('Base de datos conectada y sincronizada');
   } catch (error) {
@@ -123,8 +125,6 @@ app.listen(PORT, async () => {
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled Rejection:', reason);
 });
-
-module.exports = app;
 
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
