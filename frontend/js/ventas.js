@@ -1,4 +1,4 @@
-const API_URL = 'https://sistema-web-distribuidora-de-carne-san.onrender.com/api';
+
 const token = localStorage.getItem('san_martin_token');
 const userStr = localStorage.getItem('san_martin_user');
 
