@@ -5,24 +5,26 @@ services:
     image: postgres:15-alpine
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}  
+      POSTGRES_DB: ${DB_NAME}            
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data 
-
+      - pgdata:/var/lib/postgresql/data
 
   backend:
     build: ./backend
     ports:
       - "3000:3000"
+    env_file:
+      - ./backend/.env 
     environment:
-      DB_HOST: db 
-      DB_PORT: 5432
-      DB_USER: postgres
-      DB_PASSWORD: ${DB_PASSWORD}
-      DB_NAME: ${DB_NAME}
+      DB_HOST: db      
+      DB_PASSWORD: ${DB_PASSWORD} 
+      DB_NAME: ${DB_NAME}         
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
     depends_on:
       - db
 
@@ -30,6 +32,8 @@ services:
     build: ./frontend
     ports:
       - "8080:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html
     depends_on:
       - backend
 
