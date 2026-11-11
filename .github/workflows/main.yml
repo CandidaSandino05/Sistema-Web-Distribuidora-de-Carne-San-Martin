@@ -1,0 +1,22 @@
+name: CI Pipeline San Martin
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Descargar codigo
+      uses: actions/checkout@v4
+    
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Instalar dependencias del Backend
+      run: |
+        cd backend
+        npm install
